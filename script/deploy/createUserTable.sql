@@ -1,0 +1,1 @@
+create table user (user_id int primary key auto_increment, created datetime, last_login datetime, username varchar(30), password char(40), email varchar(100), active tinyint(1) default '0', display_name varchar(30));

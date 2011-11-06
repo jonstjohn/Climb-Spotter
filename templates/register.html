@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block contentRight %}
+
+    <h1>Register</h1>
+
+    <p>Note: All registrations must be approved by the climbing area moderator.</p>
+
+    <form action="/doRegister" method="post">
+    <table>
+    <tr>
+        <td>Username:</td>
+        <td><input type="text" name="username" id="username" size="20" maxlength="35"/>
+    </tr>
+    <tr>
+        <td>Password:</td>
+        <td><input type="password" name="password" id="password" size="20" maxlength="20"/>
+    </tr>
+    <tr>
+        <td>Re-type Password:</td>
+        <td><input type="password" name="password2" id="password2" size="20" maxlength="20"/>
+    </tr>
+    <tr>
+        <td colspan="2">&nbsp;</td>
+    </tr>
+    <tr>
+        <td>E-mail:</td>
+        <td><input type="text" name="email" id="email" size="30" maxlength="60"/>
+    </tr>
+    <tr>
+        <td>Re-type E-mail:</td>
+        <td><input type="text" name="email2" id="email2" size="30" maxlength="60"/>
+    </tr>
+    <tr>
+        <td colspan="2">&nbsp;</td>
+    </tr>
+    <tr>
+        <td>Display Name:</td>
+        <td><input type="text" name="display_name" id="display_name" size="30" maxlength="30"/></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><input type="submit" value="submit"/>
+    </tr>
+    </table>
+
+
+    </form>
+{% endblock %}

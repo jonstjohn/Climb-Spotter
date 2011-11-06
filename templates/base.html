@@ -1,0 +1,124 @@
+<html>
+<head>
+    <title>{% if title %}{{ title }}{% else %}Climb Spotter{% endif %}</title>
+    <style>
+        * { margin:0; padding:0; }
+        body, textarea { font: 14px/1.5 helvetica, arial, sans-serif; background: #fff }
+        textarea { padding: 5px }
+
+        /*h1 { font-size: 22px; text-transform: uppercase }*/
+        h1 { font-weight: normal; font-size: 24px; margin-bottom: 10px; text-align: left; padding: 0 }
+        h2 { font-weight: normal; font-size: 18px; color: #333; margin: 10px 0; color: green }
+        h3 { font-weight: normal; font-size: 16px; color: #333; margin: 10px 0 }
+
+        p { line-height: 1.5em; margin-bottom: 15px; padding: 0 }
+        td { padding: 3px }
+
+/*        a { text-decoration: none; color: green }*/
+
+        ol, ul {list-style:none }
+        li { float: left; padding-left: 20px }
+        li.first { padding-left: 0 }
+
+        h1 a, div#logo a, div#nav a { text-decoration: none; color: #000 }
+        h1 a:hover, div#nav a:hover { text-decoration: underline; color: green }
+
+        div#wrap { width: 960px; margin: 10px auto; background: #fff }
+        div#header { width: 960px; margin-bottom: 8px; position: relative; padding-top: 5px }
+        div#nav { width: 960px; padding: 5px 0; border-width: 1px 0; border-style: solid; border-color: #ccc; color: #999; font-size: 12px }
+        div#navleft { float: left; width: 710px }
+        div#navright { float: left; width: 250px }
+        div#footer { width: 960px; margin-bottom: 10px; position: relative; margin-top: 20px; padding-top: 5px; border-top: 1px solid #ccc; color: #999; font-size: 12px; clear: both }
+
+        div#headerLeft { width: 434px; float: left; height: 100%; }
+
+        div#logo { background: #fff; font-size: 36px }
+        div#search { padding-left: 40px; padding-top: 5px; padding-bottom: 0px }
+        div#headerRight { width: 526px; float: right; height: 100% }
+
+        div#content { width: 960px; background: #fff; padding-top: 30px; margin-bottom: 10px;  }
+
+        div#contentLeft { width: 170px; float: left; background: #fff }
+        div#contentLeftInner { background: #fff }
+        div.leftBlock { margin-bottom: 10px }
+        div#contentRight { width: 720px; float: left; margin-left: 70px; margin-bottom: 10px; background: #fff }
+        div#contentRightInner { background: #fff }
+
+        div.highlight { padding: 5px; margin: 20px 0; border-width: 1px 0; border-color: #ccc; border-style: solid; overflow: auto }
+
+        div.byline { margin-bottom: 10px; font-size: 12px; color: #999 }
+
+        {{ css }}
+
+        {% block cssExtra %}{% endblock %}
+
+    </style>
+</head>
+<body>
+<div id="wrap">
+    <div id="header">
+        <div id="logo"><a href="/">Climb Spotter</a></div>
+    </div>
+    <div id="nav">
+        <div id="navleft">
+            Anchor Replacement and Bolt Tracking System
+        </div>
+        <div id="navright">
+            <ul>
+                <li class="first"><a href="/">home</a></li>
+                <li><a href="/areas">areas</a></li>
+                <li><a href="/about">about</a></li>
+                <li><a href="/contact">contact</a></li>
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+    <div id="content">
+        <div id="contentLeft">
+            <div id="contentLeftInner">
+                {% block contentLeft %}
+                    <div class="leftBlock">
+                        <h2>Getting started</h2>
+                        <p>To get started, login or register below:</p>
+                        <form action="/doLogin" method="post">
+                            <table>
+                            <tr>
+                                <td><label for="username">Username:</label></td>
+                                <td><input type="text" name="username" id="username" size="10"/></td>
+                            </tr>
+                            <tr>
+                                <td><label for="password">Password:</label></td>
+                                <td><input type="password" name="password" id="password" size="10"/></td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td><input type="submit" value="submit"/></td>
+                            </tr>
+                            </table>
+                        </form>
+                        <div><a href="/register">Register</a> - <a href="/forgotPassword">Lost Password</a></div>
+                    </div>
+
+                {% endblock %}
+            </div>
+        </div>
+        <div id="contentRight">
+            <div id="contentRightInner">
+                {% block contentRight %}
+                <h1>Track Anchor Replacements and Bolting</h1>
+                <p>Welcome to Climb Spotter, an anchor replacement and bolting tracking system.  Climb Spotter is designed
+                to give local climbing organizations and individuals a way to track climbing routes anchors and bolts either
+                for internal use or to provide to landowners or public agencies.</p>
+                <p>Climb Spotter can help you to maintain an accurate list of routes, dates equipped, type of hardware used and who
+                equipped the routes.</p>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    <div style="clear: both"></div>
+    <div id="footer">
+        &copy; Copyright Jon St. John
+    </div>
+</div>
+</body>
+</html>
