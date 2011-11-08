@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block contentLeft %}
+    <h1>Menu</h1>
+
+    <ul>
+        <li><a href="/u/user">Manage Users</a></li>
+        <li><a href="/u/route/form">Submit Route</a></li>
+        <li><a href="/u/route/list">View Routes</a></li>
+    </ul>
+{% endblock %}
+
+{% block contentRight %}
+    <h1>Manage Users</h1>
+
+    <table>
+    <tr>
+        <th style="width: 120px">Display Name</th>
+        <th style="width: 80px">Username</th>
+        <th style="width: 80px">Created</th>
+        <th style="width: 80px">Last Login</th>
+        <th>Roles</th>
+        <th>Active</th>
+        <th>&nbsp;</th>
+    </tr>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.display_name }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.created }}</td>
+        <td>{{ user.last_login }}</td>
+        <td>{{ user.roles }}</td>
+        <td>{% if user.active  %}Yes{% else %}No{% endif %}</td>
+        <td><a href="/u/user/form/{{ user.username }}">edit</a></td>
+    </tr>
+    {% endfor %}
+    </table>
+
+
+
+{% endblock %}

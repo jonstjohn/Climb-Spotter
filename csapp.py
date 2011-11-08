@@ -1,15 +1,17 @@
 from flask import Flask
 from flask import render_template
 from flask import request, session
-from flask import abort, redirect, url_for 
-import MySQLdb, MySQLdb.cursors
+from flask import abort, redirect, url_for
+
+import sqlalchemy
 import json
-#import re
-#import urllib
-#import ConfigParser
+import db
 
 app = Flask(__name__)
 app.debug = True
+
+# set the secret key.  keep this really secret:
+app.secret_key = 'ADDefA221 -9981 Bdd%kkkll'
 
 @app.route('/')
 def index(post_id = None, slug = None):
@@ -22,10 +24,29 @@ def register():
 
     return render_template('register.html')
 
+@app.route('/doLogin', methods=['POST'])
+def doLogin():
+    from model import User
 
+    try:
+        user = User.getInstanceFromUsernamePassword(request.form['username'], request.form['password'])
+        session['username'] = user.username
+        return redirect(url_for('user'))
+    except sqlalchemy.orm.exc.NoResultFound:
+        return redirect(url_for('index'))
 
+@app.route('/u')
+def user():
 
+    from model import User
+    return render_template('user/index.html', users = User.getData())
 
+# Logout
+@app.route('/logout')
+def logout():
+
+    session.pop('username', None)
+    return redirect(url_for('index'))
 
 @app.route('/feed/ios/news.json')
 def news():
@@ -117,4 +138,4 @@ if __name__ == '__main__':
     app.run(host = '0.0.0.0', port = 8080)
 
 # set the secret key.  keep this really secret:
-app.secret_key = 'ADDefA221 -9981 Bdd%kkkk'
+#app.secret_key = 'ADDefA221 -9981 Bdd%kkkll'
