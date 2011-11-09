@@ -6,37 +6,41 @@
 
     <p>Note: All registrations must be approved by the climbing area moderator.</p>
 
+    {% if error %}
+        <div class="error">Please fix the following errors:<br/>{{ error|safe }}</div>
+    {% endif %}
+
     <form action="/doRegister" method="post">
     <table>
     <tr>
         <td>Username:</td>
-        <td><input type="text" name="username" id="username" size="20" maxlength="35"/>
+        <td><input type="text" name="username" id="username" size="20" maxlength="35" value="{{ username }}"/>
     </tr>
     <tr>
         <td>Password:</td>
-        <td><input type="password" name="password" id="password" size="20" maxlength="20"/>
+        <td><input type="password" name="password" id="password" size="20" maxlength="20" value="{{ password }}"/>
     </tr>
     <tr>
         <td>Re-type Password:</td>
-        <td><input type="password" name="password2" id="password2" size="20" maxlength="20"/>
+        <td><input type="password" name="password2" id="password2" size="20" maxlength="20" value="{{ password2 }}"/>
     </tr>
     <tr>
         <td colspan="2">&nbsp;</td>
     </tr>
     <tr>
         <td>E-mail:</td>
-        <td><input type="text" name="email" id="email" size="30" maxlength="60"/>
+        <td><input type="text" name="email" id="email" size="30" maxlength="60" value="{{ email }}"/>
     </tr>
     <tr>
         <td>Re-type E-mail:</td>
-        <td><input type="text" name="email2" id="email2" size="30" maxlength="60"/>
+        <td><input type="text" name="email2" id="email2" size="30" maxlength="60" value="{{ email2 }}"/>
     </tr>
     <tr>
         <td colspan="2">&nbsp;</td>
     </tr>
     <tr>
         <td>Display Name:</td>
-        <td><input type="text" name="display_name" id="display_name" size="30" maxlength="30"/></td>
+        <td><input type="text" name="display_name" id="display_name" size="30" maxlength="30" value="{{ display_name }}"/></td>
     </tr>
     <tr>
         <td>&nbsp;</td>

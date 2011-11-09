@@ -22,9 +22,11 @@
         h1 a, div#logo a, div#nav a { text-decoration: none; color: #000 }
         h1 a:hover, div#nav a:hover { text-decoration: underline; color: green }
 
-        table { border-collapse: collapse; width: 100% }
-        th { font-weight: normal; text-align: left; padding: 3px; background: #ccc }
-        td { padding: 3px; border: 1px solid #ccc }
+        table.data { border-collapse: collapse; width: 100% }
+        table.data th { font-weight: normal; text-align: left; padding: 3px; background: #ccc }
+        table.data td { padding: 3px; border: 1px solid #ccc; background: #fff }
+
+        .error { color: red; margin: 10px 0; line-height: 1.2 }
 
         div#contentLeft li { padding: 0; float: none }
 
@@ -110,7 +112,7 @@
                             </tr>
                             </table>
                         </form>
-                        <div><a href="/register">Register</a> - <a href="/forgotPassword">Lost Password</a></div>
+                        <div style="margin-top: 10px"><a href="/register">Register</a> - <a href="/forgotPassword">Lost Password</a></div>
                     </div>
 
                 {% endblock %}

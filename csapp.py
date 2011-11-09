@@ -24,6 +24,56 @@ def register():
 
     return render_template('register.html')
 
+@app.route('/doRegister', methods=['POST'])
+def doRegister():
+
+    from model import User
+
+    errors = []
+    # Validate data
+    # Check for required fields
+    labels = {'username': 'Username', 'password': 'Password',
+        'password2': 'Re-type Password', 'email': 'E-mail',
+        'email2': 'Re-type Email', 'display_name': 'Display Name'}
+    for el in ['username', 'password', 'password2', 'email', 'email2', 'display_name']:
+        if el not in request.form or len(request.form[el]) == 0:
+            errors.append("'{0}' is a required field.".format(labels[el]))
+
+    # Make sure username is not currently used
+    if User.usernameExists(request.form['username']):
+        errors.append("The username '{username}' already exists in our system. Please choose a different one.".format(username = request.form['username']))
+
+    # Compared passwords and emails
+
+    # If errors, display form again
+    if len(errors) != 0:
+
+        return render_template(
+            'register.html', error = "<br/>\n".join(errors),
+            username = request.form['username'],
+            password = request.form['password'],
+            password2 = request.form['password2'],
+            email = request.form['email'],
+            email2 = request.form['email2'],
+            display_name = request.form['display_name']
+        )
+
+    # If no errors, save user as not active and redirect to awaiting approval page
+    user = User.User()
+    user.username = request.form['username']
+    user.set_encrypted_password(request.form['password'])
+    user.email = request.form['email']
+    user.display_name = request.form['display_name']
+    user.save()
+    return 'no error'
+
+
+@app.route('/registerDone')
+def registerDone():
+
+    return render_template('registerDone.html')
+    
+
 @app.route('/doLogin', methods=['POST'])
 def doLogin():
     from model import User

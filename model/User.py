@@ -17,10 +17,10 @@ class User(object):
         if user_id:
 
             self.user_id = user_id
-            self._load()
+            self.__load()
 
     # Load instance from db
-    def _load(self):
+    def __load(self):
 
         if not self.user_id:
 
@@ -37,6 +37,37 @@ class User(object):
         self.email = dbUser.email
         self.active = dbUser.active
         self.display_name = dbUser.display_name
+
+    def save(self):
+
+        from dbModel import DbUser
+        from sqlalchemy import func
+        import db
+        session = db.session()
+
+        if self.user_id:
+            dbUser = session.query(DbUser).filter(DbUser.user_id == self.user_id).one()
+        else:
+            dbUser = DbUser()
+            dbUser.created = func.now()
+
+        dbUser.username = self.username
+        dbUser.password = self.password
+        dbUser.email = self.email
+        dbUser.active = self.active
+        dbUser.display_name = self.display_name
+
+        # Add if it does not exist already in db
+        if not self.user_id:
+            session.add(dbUser)
+
+        session.commit()
+
+    def set_encrypted_password(self, password):
+
+        import db
+        session = db.session()
+        self.password = session.query('encrypted_password').from_statement("SELECT SHA1(:password) AS encrypted_password").params(password = password).one()
 
 # Get User instance from username and password
 # @param string username Username
@@ -57,11 +88,19 @@ def getInstanceFromUsernamePassword(username, password):
 def getInstanceFromUsername(username):
 
     from dbModel import DbUser
-    from sqlalchemy import func
     import db
     session = db.session()
     dbUser = session.query(DbUser).filter(DbUser.username == username).one()
     return User(dbUser.user_id)
+
+def usernameExists(username):
+
+    from dbModel import DbUser
+    from sqlalchemy import func
+    import db
+    session = db.session()
+    query = session.query(DbUser).filter(DbUser.username == username)
+    return query.count() != 0
 
 # Get data
 # @return array
