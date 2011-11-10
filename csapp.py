@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask import request, session
-from flask import abort, redirect, url_for
+from flask import abort, redirect, url_for, flash
 
 import sqlalchemy
 import json
@@ -44,6 +44,18 @@ def doRegister():
         errors.append("The username '{username}' already exists in our system. Please choose a different one.".format(username = request.form['username']))
 
     # Compared passwords and emails
+    if request.form['password'] != request.form['password2']:
+        errors.append('Passwords must match.')
+    if request.form['email'] != request.form['email2']:
+        errors.append('E-mail addresses must match.')
+
+    # No spaces in username or password
+    if ' ' in request.form['username']:
+        errors.append('Username may not contain spaces')
+    if len(request.form['username']) not in range(4, 31):
+        errors.append('Username must be 4-30 characters long.')
+    if len(request.form(['password']) not in range(6, 21)):
+        errors.append('Password must be 6-20 characters long.')
 
     # If errors, display form again
     if len(errors) != 0:
@@ -65,7 +77,7 @@ def doRegister():
     user.email = request.form['email']
     user.display_name = request.form['display_name']
     user.save()
-    return 'no error'
+    return redirect(url_for('user'))
 
 
 @app.route('/registerDone')
@@ -90,6 +102,16 @@ def user():
 
     from model import User
     return render_template('user/index.html', users = User.getData())
+
+@app.route('/u/activate')
+def user_activate():
+
+    from model import User
+    user_id = int(request.args.get('id'))
+    user = User.User(user_id)
+    user.activate()
+    flash('User activated')
+    return redirect(url_for('user'))
 
 # Logout
 @app.route('/logout')

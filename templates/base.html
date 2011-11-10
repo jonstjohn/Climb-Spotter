@@ -30,7 +30,7 @@
 
         div#contentLeft li { padding: 0; float: none }
 
-        div#wrap { width: 100%; margin: 0 auto; background: #fff }
+        div#wrap { width: 100%; margin: 0 auto; background: #f6f6e8 }
         div#headerWrap { width: 100%; background: #353535; height: 80px }
         div#header { width: 960px; margin: 0 auto; position: relative; height: 100% }
         div#nav { width: 960px; padding: 5px 0; border-width: 1px 0; border-style: solid; border-color: #ccc; color: #999; font-size: 12px }
@@ -62,6 +62,9 @@
 
         div#byline { font-size: 12px; color: #ccc }
 
+        div#flashWrap {  width: 100% }
+        div#flash { width: 960px; margin: 10px auto 0 auto; color: green }
+
         {{ css }}
 
         {% block cssExtra %}{% endblock %}
@@ -88,6 +91,19 @@
             </div>
         </div>
     </div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div id="flashWrap">
+        <div id="flash">
+            {% for message in messages %}
+            {{ message }}<br/>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+
     <div id="contentWrap">
     <div id="content">
         <div id="contentLeft">

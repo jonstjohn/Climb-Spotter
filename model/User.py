@@ -69,6 +69,16 @@ class User(object):
         session = db.session()
         self.password = session.query('encrypted_password').from_statement("SELECT SHA1(:password) AS encrypted_password").params(password = password).one()
 
+    def activate(self):
+
+        from dbModel import DbUser
+        import db
+        session = db.session()
+        dbUser = session.query(DbUser).filter(DbUser.user_id == self.user_id).one()
+        dbUser.active = 1
+        self.active = 1
+        session.commit()
+
 # Get User instance from username and password
 # @param string username Username
 # @param string password Passowrd
@@ -112,6 +122,7 @@ def getData():
     users = []
     for user in session.query(DbUser).order_by(DbUser.username):
         users.append({
+            'user_id': user.user_id,
             'username': user.username,
             'display_name': user.display_name,
             'created': user.created,
