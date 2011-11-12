@@ -3,6 +3,8 @@ from flask import render_template
 from flask import request, session
 from flask import abort, redirect, url_for, flash
 
+from functools import wraps
+
 import sqlalchemy
 import json
 import db
@@ -12,6 +14,18 @@ app.debug = True
 
 # set the secret key.  keep this really secret:
 app.secret_key = 'ADDefA221 -9981 Bdd%kkkll'
+
+# Check for valid login, used as decorator
+def login_required(f):
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not 'username' in session or not session['username']:
+            return redirect(url_for('index', next=request.url))
+        return f(*args, **kwargs)
+
+    return decorated_function
+
 
 @app.route('/')
 def index(post_id = None, slug = None):
@@ -98,6 +112,7 @@ def doLogin():
         return redirect(url_for('index'))
 
 @app.route('/u')
+@login_required
 def user():
 
     from model import User

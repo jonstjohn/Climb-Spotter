@@ -15,6 +15,31 @@ class DbUser(Base):
     email = Column(VARCHAR(100))
     active = Column(INTEGER)
     display_name = Column(VARCHAR(30))
+
+class DbRole(Base):
+
+    __tablename__ = 'role'
+    role_id = Column(INTEGER, primary_key = True)
+    name = Column(VARCHAR(25))
+
+class DbPrivilege(Base):
+
+    __tablename__ = 'privilege'
+    privilege_id = Column(INTEGER, primary_key = True)
+    name = Column(VARCHAR(25))
+
+class DbRolePrivilege(Base):
+
+    __tablename__ = 'role_privilege'
+    role_id = Column(INTEGER, primary_key = True)
+    privilege_id = Column(INTEGER, primary_key = True)
+
+class DbUserRole(Base):
+
+    __tablename__ = 'user_role'
+    user_id = Column(INTEGER, primary_key = True)
+    role_id = Column(INTEGER, primary_key = True)
+
 #
 #class MpArea(Base):
 #
