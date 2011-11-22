@@ -1,0 +1,89 @@
+{% extends 'auth_base.html' %}
+
+{% block contentRight %}
+
+    <h1>Submit Route</h1>
+
+    {% if error %}
+        <div class="error">Please fix the following errors<br/>{{ error|safe }}</div>
+    {% endif %}
+
+    <div class="inset">
+    <form action="/u/form/save" method="post">
+    <table class="form ui-corner-all">
+    <tr>
+        <td>Area</td>
+        <td>
+            <select name="area_id" id="area_id">
+                {{ html_options(area_options) }}
+            </select>
+        </td>
+    <tr>
+    <tr>
+        <td>Route</td>
+        <td>
+            <select name="route_id" id="route_id">
+            </select>
+        </td>
+    <tr>
+    <tr>
+        <td>Date Completed</td>
+        <td><input class="datepicker" type="text" name="work_date" id="work_date" size="12" maxlength="12" value="{{ work_date }}"/>
+    </tr>
+    <tr>
+        <td>Who Replaced</td>
+        <td><input type="text" name="who" id="who" size="60" maxlength="60" value="{{ who }}"/>
+    </tr>
+    <tr>
+        <td># Bolts Placed</td>
+        <td><input type="text" name="bolts_placed" id="bolts_placed" size="3" maxlength="3" value="{{ bolts_placed }}"/></td>
+    </tr>
+    <tr>
+        <td>Anchor Replaced?</td>
+        <td>
+            <select name="active" id="active">
+                <option value="0">No</option>
+                <option value="1"{% if active == 1 %} selected{% endif %}>Yes</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>New Anchor?</td>
+        <td>
+            <select name="active" id="active">
+                <option value="0">No</option>
+                <option value="1"{% if active == 1 %} selected{% endif %}>Yes</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>Notes</td>
+        <td><textarea rows="5" cols="50"></textarea></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><input type="submit" value="Submit Route"/>
+    </tr>
+    </table>
+        <input type="hidden" name="original_username" value="{{ original_username }}"/>
+
+    </form>
+    </div>
+<script>
+    $(function() {
+        $( ".datepicker" ).datepicker();
+        $( "input:submit" ).button();
+    });
+</script>
+
+{% endblock %}
+
+{% macro input(name, value='', type='text', size=20) -%}
+    <input type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="{{ size }}">
+{%- endmacro %}
+
+{% macro html_options(options, def = '') -%}
+    {% for option in options  %}
+        <option value="{{ option[0] }}">{{ option[1] }}</option>
+    {% endfor %}
+{%- endmacro %}

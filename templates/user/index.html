@@ -1,25 +1,23 @@
-{% extends 'base.html' %}
-
-{% block contentLeft %}
-    <h1>Menu</h1>
-
-    <ul>
-        <li><a href="/u/user">Manage Users</a></li>
-        <li><a href="/u/route/form">Submit Route</a></li>
-        <li><a href="/u/route/list">View Routes</a></li>
-    </ul>
-{% endblock %}
+{% extends 'auth_base.html' %}
 
 {% block contentRight %}
-    <h1>Manage Users</h1>
-
+    <h2>Manage Users (5)</h2>
+    <div style="width: 720px; background: #fff; font-size: 14px; padding: 2px 5px">Select: All | None</div>
+    <ul>
+    {% for user in users %}
+        <li style="background: #eee; padding: 5px; width: 720px">
+            <input type="checkbox" style="margin: 2px 10px 2px 5px"/> <span style="width: 200px; float: left; font-size: 14px"><a href="/u/user/form/{{ user.username }}">{{ user.display_name }}</a> ({{ user.username }})</span>
+        </li>
+    {% endfor %}
+    </ul>
+<!--
     <table class="data">
     <tr>
         <th style="width: 120px">Display Name</th>
         <th style="width: 80px">Username</th>
         <th style="width: 80px">Created</th>
         <th style="width: 80px">Last Login</th>
-        <th>Roles</th>
+        <th>Role</th>
         <th>Active</th>
         <th>&nbsp;</th>
     </tr>
@@ -30,12 +28,11 @@
         <td>{{ user.created }}</td>
         <td>{{ user.last_login }}</td>
         <td>{{ user.roles }}</td>
-        <td>{% if user.active  %}Yes{% else %}<a href="/u/activate?id={{ user.user_id }}">Activate</a>{% endif %}</td>
+        <td>{% if user.active  %}Yes{% else %}<a href="/u/user/activate?id={{ user.user_id }}">Activate</a>{% endif %}</td>
         <td><a href="/u/user/form/{{ user.username }}">edit</a></td>
     </tr>
     {% endfor %}
     </table>
-
-
+-->
 
 {% endblock %}

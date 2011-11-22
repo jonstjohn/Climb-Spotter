@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block headerAuth %}
+    <a href="/logout">Logout</a>
+{% endblock %}
+{% block contentLeft %}
+    <h2>Menu</h2>
+        <ul class="userMenu">
+            <li class="active"><a href="/u/user">Manage Users</a></li>
+            <li><a href="/u/route/form">Submit Route</a></li>
+            <li><a href="/u/route/list">View Routes</a></li>
+        </ul>
+{% endblock %}
+

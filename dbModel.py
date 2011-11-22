@@ -2,6 +2,12 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base();
 from sqlalchemy import Column, Integer, String, VARCHAR, Text, Date, DATETIME, DECIMAL, CHAR, INTEGER, ForeignKey
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.schema import Table
+
+user_role_table = Table('user_role', Base.metadata,
+    Column('user_id', Integer, ForeignKey('user.user_id')),
+    Column('role_id', Integer, ForeignKey('role.role_id'))
+)
 
 class DbUser(Base):
 
@@ -15,6 +21,8 @@ class DbUser(Base):
     email = Column(VARCHAR(100))
     active = Column(INTEGER)
     display_name = Column(VARCHAR(30))
+
+    roles = relationship("DbRole", secondary = user_role_table, backref="users")
 
 class DbRole(Base):
 
@@ -34,11 +42,60 @@ class DbRolePrivilege(Base):
     role_id = Column(INTEGER, primary_key = True)
     privilege_id = Column(INTEGER, primary_key = True)
 
-class DbUserRole(Base):
+class DbArea(Base):
 
-    __tablename__ = 'user_role'
-    user_id = Column(INTEGER, primary_key = True)
-    role_id = Column(INTEGER, primary_key = True)
+    __tablename__ = 'area'
+
+    area_id = Column(Integer, primary_key = True)
+    name = Column(VARCHAR(50))
+    created = Column(DATETIME)
+
+class DbRoute(Base):
+
+    __tablename__ = 'route'
+
+    route_id = Column(Integer, primary_key = True)
+    area_id = Column(Integer, ForeignKey('area.area_id'))
+    name = Column(VARCHAR(50))
+    created = Column(DATETIME)
+
+    area = relationship("DbArea")
+
+class DbRouteWork(Base):
+
+    __tablename__ = 'route_work'
+
+    route_work_id = Column(Integer, primary_key = True)
+    route_id = Column(Integer, ForeignKey('route.route_id'))
+    user_id = Column(Integer, ForeignKey('user.user_id'))
+    who = Column(VARCHAR(100))
+    work_date = Column(Date)
+    bolts_placed = Column(Integer)
+    anchor_replaced = Column(Integer)
+    new_anchor = Column(Integer)
+    created = Column(DATETIME)
+
+    notes = relationship('DbRouteWorkNote')
+
+class DbRouteWorkNote(Base):
+
+    __tablename__ = 'route_work_note'
+
+    route_work_note_id = Column(Integer, primary_key = True)
+    route_work_id = Column(Integer, ForeignKey('route_work.route_work_id'))
+    user_id = Column(Integer, ForeignKey('user.user_id'))
+    note = Column(Text)
+    created = Column(DATETIME)
+
+
+#class DbUserRole(Base):
+
+#    __tablename__ = 'user_role'
+#    user_id = Column(INTEGER, primary_key = True)
+#    role_id = Column(INTEGER, primary_key = True)
+
+#    user = relationship('DbUser', uselist = False, backref = 'user')
+#    role = relationship('DbRole', uselist = False, backref = 'role')
 
 #
 #class MpArea(Base):

@@ -1,0 +1,110 @@
+{% extends 'auth_base.html' %}
+
+{% block contentRight %}
+
+    <h2>Edit User</h2>
+
+    <div class="contentRightBlock">
+    {% if error %}
+        <div class="error">Please fix the following errors<br/>{{ error|safe }}</div>
+    {% endif %}
+
+    <form action="/u/user/save" method="post">
+    <div class="build">
+        <label for="username">Username</label>
+        <div class="widget">
+            <input type="text" name="username" id="username" size="20" maxlength="35" value="{{ username }}"/>
+            <p class="help_text">Unique username across entire system.</p>
+        </div>
+    </div>
+    <div class="build">
+        <label for="display_name">Display Name</label>
+        <div class="widget">
+            <input type="text" name="display_name" id="display_name" size="30" maxlength="60" value="{{ display_name }}"/>
+            <p class="help_text">Name displayed for user throughout system.</p>
+        </div>
+    </div>
+    <div class="build">
+        <label for="email">Email</label>
+        <div class="widget">
+            <input type="text" name="email" id="email" size="30" maxlength="60" value="{{ email }}"/>
+        </div>
+    </div>
+    <div class="build">
+        <label for="active">Active</label>
+        <div class="widget">
+            <input type="checkbox" name="active" id="active" value="1"{% if  active == 1 %} checked{% endif %}/>
+            <p class="help_text">Active users may login with full access according to their role.</p>
+        </div>
+    </div>
+    <div class="build">
+        <label for="role">Role</label>
+        <div class="widget">
+            <ul>
+                <li><label><input type="radio" name="role_id" id="role_id_2" value="2"{% if 2 in role_ids %} checked{% endif %}/> <span for="role_id_2">Moderator</span></label></li>
+                <li><label><input type="radio" name="role_id" id="role_id_3" value="3"{% if 3 in role_ids %} checked{% endif %}/> <span for="role_id_3">Bolter</span></label></li>
+                <li><label><input type="radio" name="role_id" id="role_id_4" value="4"{% if 4 in role_ids %} checked{% endif %}/> <span for="role_id_4">Viewer</span></label></li>
+            </ul>
+            <p class="help_text">Moderators manage areas and users.<br/>Bolters submit routes.<br/>Viewers view route data.</p>
+        </div>
+    </div>
+
+    <div class="build">
+        <label>&nbsp;</label>
+        <div class="widget">
+            <input type="submit" value="submit"/>
+        </div>
+    <input type="hidden" name="original_username" value="{{ original_username }}"/>
+    </form>
+<!--
+    <form action="/u/user/save" method="post">
+    <table class="form">
+    <tr>
+        <td>Username</td>
+        <td><input type="text" name="username" id="username" size="20" maxlength="35" value="{{ username }}"/>
+    </tr>
+    <tr>
+        <td>E-mail</td>
+        <td><input type="text" name="email" id="email" size="30" maxlength="60" value="{{ email }}"/>
+    </tr>
+    <tr>
+        <td>Display Name</td>
+        <td><input type="text" name="display_name" id="display_name" size="30" maxlength="30" value="{{ display_name }}"/></td>
+    </tr>
+    <tr>
+        <td>Active</td>
+        <td>
+            <select name="active" id="active">
+                <option value="0">No</option>
+                <option value="1"{% if active == 1 %} selected{% endif %}>Yes</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>Role</td>
+        <td>
+            <select name="role_id" id="role_id">
+                <option value="">None</option>
+                <option value="2"{% if 2 in role_ids %} selected{% endif %}>Moderator</option>
+                <option value="3"{% if 3 in role_ids %} selected {% endif %}>Bolter</option>
+                <option value="4"{% if 4 in role_ids %} selected {% endif %}>Viewer</option>
+            </select>
+        </td>
+    <tr>
+        <td>&nbsp;</td>
+        <td><input type="submit" value="submit"/>
+    </tr>
+    </table>
+        <input type="hidden" name="original_username" value="{{ original_username }}"/>
+
+    </form>
+    -->
+
+    </div>
+{% endblock %}
+
+<script type="text/javascript">
+$(function() {
+    $("input:submit").button();
+});
+</script>

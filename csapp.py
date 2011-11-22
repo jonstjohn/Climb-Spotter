@@ -107,7 +107,7 @@ def doLogin():
     try:
         user = User.getInstanceFromUsernamePassword(request.form['username'], request.form['password'])
         session['username'] = user.username
-        return redirect(url_for('user'))
+        return redirect(url_for('user_manage'))
     except sqlalchemy.orm.exc.NoResultFound:
         return redirect(url_for('index'))
 
@@ -118,7 +118,16 @@ def user():
     from model import User
     return render_template('user/index.html', users = User.getData())
 
-@app.route('/u/activate')
+@app.route('/u/user')
+@login_required
+def user_manage():
+
+    from model import User
+    return render_template('user/index.html', users = User.getData())
+
+
+@app.route('/u/user/activate')
+@login_required
 def user_activate():
 
     from model import User
@@ -128,12 +137,105 @@ def user_activate():
     flash('User activated')
     return redirect(url_for('user'))
 
+@app.route('/u/user/form/<username>')
+@login_required
+def user_form(username):
+
+    from model import User
+    user = User.getInstanceFromUsername(username)
+
+    # Do not allow editing administrators
+    if user.is_administrator():
+
+        return redirect(url_for('user'))
+
+    return render_template('user/form.html',
+                username = user.username,
+                original_username = user.username,
+                email = user.email,
+                display_name = user.display_name,
+                active = user.active,
+                role_ids = user.role_ids()
+    )
+
+@app.route('/u/user/save', methods = ['POST'])
+def user_save():
+
+    from model import User
+
+    # Load user id from original username
+    user = User.getInstanceFromUsername(request.form['original_username'])
+
+    errors = []
+    # Validate data
+    # Check for required fields
+    labels = {'username': 'Username', 'email': 'E-mail', 'display_name': 'Display Name'}
+    for el in ['username', 'email', 'display_name']:
+        if el not in request.form or len(request.form[el]) == 0:
+            errors.append("'{0}' is a required field.".format(labels[el]))
+
+    # Make sure username is not currently used
+    if user.username != request.form['username'] and User.usernameExists(request.form['username'], exclude_user_id = user.user_id):
+        errors.append("The username '{username}' already exists in our system. Please choose a different one.".format(username = request.form['username']))
+
+    # No spaces in username or password
+    if ' ' in request.form['username']:
+        errors.append('Username may not contain spaces')
+    if len(request.form['username']) not in range(4, 31):
+        errors.append('Username must be 4-30 characters long.')
+
+    # If errors, display form again
+    if len(errors) != 0:
+
+        role_id = ''
+        if 'role_id' in request.form and len(request.form['role_id']) > 0:
+            role_id = int(request.form['role_id'])
+
+
+        return render_template(
+            'user/form.html', error = "<br/>\n".join(errors),
+            original_username = request.form['original_username'],
+            username = request.form['username'],
+            email = request.form['email'],
+            display_name = request.form['display_name'],
+            active = int(request.form['active']),
+            role_ids = [role_id]
+        )
+
+    # If no errors, save user as not active and redirect to awaiting approval page
+    user.username = request.form['username']
+    user.email = request.form['email']
+    user.display_name = request.form['display_name']
+    user.active = request.form['active']
+    user.save()
+
+    user.update_roles([request.form['role_id']])
+    return redirect(url_for('user_manage'))
+
+# Route form
+@app.route('/u/route/form')
+@login_required
+def route_form():
+
+    return render_template('route/form.html', area_options = [('1', 'New River Gorge'), ('2', 'Meadow River Gorge')])
+
+
 # Logout
 @app.route('/logout')
 def logout():
 
     session.pop('username', None)
     return redirect(url_for('index'))
+
+
+
+
+
+
+
+
+
+
 
 @app.route('/feed/ios/news.json')
 def news():

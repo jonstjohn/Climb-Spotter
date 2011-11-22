@@ -1,75 +1,18 @@
 <html>
 <head>
     <title>{% if title %}{{ title }}{% else %}Climb Spotter{% endif %}</title>
+    <link rel="stylesheet" href="/static/css/main.css" type="text/css"/>
     <style>
-        * { margin:0; padding:0; }
-        body, textarea, table { font: 13px/1.5 helvetica, arial, sans-serif }
-        textarea { padding: 5px }
-
-        /*h1 { font-size: 22px; text-transform: uppercase }*/
-        h1 { font-weight: normal; font-size: 24px; margin-bottom: 10px; text-align: left; padding: 0 }
-        h2 { font-weight: normal; font-size: 18px; color: #333; margin: 10px 0; color: #3B8DBD }
-        h3 { font-weight: normal; font-size: 16px; color: #333; margin: 10px 0 }
-
-        p { line-height: 1.5em; margin-bottom: 15px; padding: 0 }
-
-/*        a { text-decoration: none; color: green }*/
-
-        ol, ul {list-style:none }
-        li { float: left; padding-left: 20px }
-        li.first { padding-left: 0 }
-
-        h1 a, div#logo a, div#nav a { text-decoration: none; color: #000 }
-        h1 a:hover, div#nav a:hover { text-decoration: underline; color: green }
-
-        table.data { border-collapse: collapse; width: 100% }
-        table.data th { font-weight: normal; text-align: left; padding: 3px; background: #ccc }
-        table.data td { padding: 3px; border: 1px solid #ccc; background: #fff }
-
-        .error { color: red; margin: 10px 0; line-height: 1.2 }
-
-        div#contentLeft li { padding: 0; float: none }
-
-        div#wrap { width: 100%; margin: 0 auto; background: #f6f6e8 }
-        div#headerWrap { width: 100%; background: #353535; height: 80px }
-        div#header { width: 960px; margin: 0 auto; position: relative; height: 100% }
-        div#nav { width: 960px; padding: 5px 0; border-width: 1px 0; border-style: solid; border-color: #ccc; color: #999; font-size: 12px }
-        div#navleft { float: left; width: 710px }
-        div#navright { float: left; width: 250px }
-        div#footerWrap { width: 100%; background: #353535 }
-        div#footer { width: 960px; margin: 0 auto; position: relative;padding-top: 5px; color: #999; font-size: 12px; clear: both; background: #353535; height: 25px }
-
-        div#headerLeft { width: 434px; float: left; height: 100%; }
-
-        div#logo { font-size: 36px; width: 300px; vertical-align: center; line-height: 1.2; margin-top: 5px }
-        div#logo a { color: #f6f6e8 }
-        div#search { padding-left: 40px; padding-top: 5px; padding-bottom: 0px }
-        div#headerRight { width: 526px; float: right; height: 100% }
-        div#headerRightNav { float: right; margin: 25px; font-size: 18px; color: #f6f6e8 }
-        div#headerRightNav a { color: #f6f6e8; text-decoration: none }
-        div#headerRightNav a:hover { text-decoration: underline }
-
-        div#contentWrap { width: 100%; background: #f6f6e8; height: 600px }
-        div#content { width: 960px; margin: 0 auto; padding-top: 30px; margin-bottom: 10px; }
-
-        div#contentLeft { width: 190px; float: left }
-        div#contentLeftInner { }
-        div.leftBlock { margin-bottom: 10px; padding: 5px}
-        div#contentRight { width: 730px; float: left; margin-left: 40px; margin-bottom: 10px; }
-        div#contentRightInner { }
-
-        div.highlight { padding: 5px; margin: 20px 0; border-width: 1px 0; border-color: #ccc; border-style: solid; overflow: auto }
-
-        div#byline { font-size: 12px; color: #ccc }
-
-        div#flashWrap {  width: 100% }
-        div#flash { width: 960px; margin: 10px auto 0 auto; color: green }
 
         {{ css }}
 
         {% block cssExtra %}{% endblock %}
 
     </style>
+    <link rel="stylesheet" href="/static/css/jq.css" type="text/css"/>
+    <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAr3tFP4-aIDSXrNZA9rx2VxSsm6LF6J7K9e2qSPZLVjjzNGyBFRRJpy8NTbDEYLxulguQV25yrGYQuw"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 </head>
 <body>
 <div id="wrap">
@@ -81,12 +24,14 @@
             </div>
             <div id="headerRight">
                 <div id="headerRightNav">
-                <ul>
-                    <li class="first"><a href="/">Home</a></li>
-                    <li><a href="/areas">Areas</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/contact">Contact</a></li>
-                </ul>
+                    <ul>
+                        <li class="first"><a href="/">Home</a></li>
+                        <li><a href="/areas">Areas</a></li>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/login">Login</a></li>
+                        <li><a href="/register">Register</a></li>
+                    </ul>
+                    <div id="headerRightAuth">{% block headerAuth %}{% endblock %}</div>
                 </div>
             </div>
         </div>
@@ -110,25 +55,29 @@
             <div id="contentLeftInner">
                 {% block contentLeft %}
                     <div class="leftBlock">
-                        <h1>Getting started</h1>
-                        <p>Login or register below:</p>
-                        <form action="/doLogin" method="post" style="background: #fff; padding: 10px; border: 1px solid #ccc">
-                            <table>
-                            <tr>
-                                <td><label for="username">Username:</label></td>
-                                <td><input type="text" name="username" id="username" size="8"/></td>
-                            </tr>
-                            <tr>
-                                <td><label for="password">Password:</label></td>
-                                <td><input type="password" name="password" id="password" size="8"/></td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td><input type="submit" value="submit"/></td>
-                            </tr>
-                            </table>
-                        </form>
-                        <div style="margin-top: 10px"><a href="/register">Register</a> - <a href="/forgotPassword">Lost Password</a></div>
+                        <h2>Getting started</h2>
+                        <div class="leftBlockInner">
+                            <div>Login:</div>
+                            <form action="/doLogin" method="post">
+                                <table class="form">
+                                <tr>
+                                    <td><label for="username">Username:</label></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" name="username" id="username" size="8"/></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="password">Password:</label></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="password" name="password" id="password" size="8"/></td>
+                                <tr>
+                                    <td><input type="submit" value="submit"/></td>
+                                </tr>
+                                </table>
+                            </form>
+                            <div style="margin-top: 10px"><a href="/register">Register</a> - <a href="/forgotPassword">Lost Password</a></div>
+                        </div>
                     </div>
 
                 {% endblock %}
@@ -146,6 +95,7 @@
                 {% endblock %}
             </div>
         </div>
+        <div style="clear: both"></div>
     </div>
     </div>
     <div style="clear: both"></div>

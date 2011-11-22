@@ -1,0 +1,6 @@
+CREATE TABLE route_work (route_work_id int unsigned primary key auto_increment, route_id int unsigned not null, user_id int not null, who varchar(100), work_date datetime not null, bolts_placed tinyint unsigned not null default 0 , anchor_replaced tinyint(1) not null default 0, new_anchor tinyint(1) not null default 0, created datetime, INDEX (route_id), INDEX(user_id), INDEX(created));
+CREATE TABLE route_work_note (route_work_note_id int unsigned primary key auto_increment, route_work_id int unsigned not null, user_id int unsigned not null, note text not null, created datetime, index(route_work_id), index(user_id));
+CREATE TABLE area (area_id int unsigned primary key auto_increment, name varchar(50) not null, created datetime, index(area_id));
+CREATE TABLE area_relationship (ancestor int unsigned not null, descendent int unsigned not null, primary key(ancestor, descendent), foreign key(ancestor) references area(area_id), foreign key(descendent) references area(area_id));
+CREATE TABLE route(route_id int unsigned primary key auto_increment, area_id int unsigned not null, name varchar(50), created datetime, index(area_id));
+INSERT INTO area (area_id, name, created) VALUES (1, 'New River Gorge', now()), (2, 'Meadow River', now());
