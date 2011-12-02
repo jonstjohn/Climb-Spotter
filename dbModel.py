@@ -29,6 +29,7 @@ class DbRole(Base):
     __tablename__ = 'role'
     role_id = Column(INTEGER, primary_key = True)
     name = Column(VARCHAR(25))
+    privileges = relationship('DbRolePrivilege')
 
 class DbPrivilege(Base):
 
@@ -39,8 +40,8 @@ class DbPrivilege(Base):
 class DbRolePrivilege(Base):
 
     __tablename__ = 'role_privilege'
-    role_id = Column(INTEGER, primary_key = True)
-    privilege_id = Column(INTEGER, primary_key = True)
+    role_id = Column(INTEGER, ForeignKey('role.role_id'), primary_key = True)
+    privilege_id = Column(INTEGER, ForeignKey('privilege.privilege_id'), primary_key = True)
 
 class DbArea(Base):
 
@@ -75,6 +76,7 @@ class DbRouteWork(Base):
     new_anchor = Column(Integer)
     created = Column(DATETIME)
 
+    route = relationship('DbRoute', uselist = False, backref = 'route_work')
     notes = relationship('DbRouteWorkNote')
 
 class DbRouteWorkNote(Base):

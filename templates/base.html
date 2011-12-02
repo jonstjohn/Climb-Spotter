@@ -28,10 +28,12 @@
                         <li class="first"><a href="/">Home</a></li>
                         <li><a href="/areas">Areas</a></li>
                         <li><a href="/about">About</a></li>
-                        <li><a href="/login">Login</a></li>
-                        <li><a href="/register">Register</a></li>
+                        {% if session.user_id %}
+                            <li><a href="/logout">Logout</a></li>
+                        {% else %}
+                            <li><a href="/register">Register</a></li>
+                        {% endif %}
                     </ul>
-                    <div id="headerRightAuth">{% block headerAuth %}{% endblock %}</div>
                 </div>
             </div>
         </div>
@@ -55,28 +57,35 @@
             <div id="contentLeftInner">
                 {% block contentLeft %}
                     <div class="leftBlock">
-                        <h2>Getting started</h2>
-                        <div class="leftBlockInner">
-                            <div>Login:</div>
+                        <h2>Login</h2>
+                        <div class="leftBlockInner" style="background: #fff">
+                            {% if session.user_id %}
+                                <div style="font-size: 12px; padding: 5px">
+                                    <div>You are currently logged in. To re-enter Climb Spotter, click the button below:</div>
+                                    <div style="padding: 5px"><button style="font-size: 12px" id="reenter">Enter Climb Spotter</button></div>
+                                    <div style="margin-top: 10px">Or <a href="/logout">Logout</a></div>
+                                </div>
+                            {% else %}
                             <form action="/doLogin" method="post">
                                 <table class="form">
                                 <tr>
                                     <td><label for="username">Username:</label></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="text" name="username" id="username" size="8"/></td>
+                                    <td><input type="text" name="username" id="username" size="8" style="width: 150px"/></td>
                                 </tr>
                                 <tr>
                                     <td><label for="password">Password:</label></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="password" name="password" id="password" size="8"/></td>
+                                    <td><input type="password" name="password" id="password" size="8" style="width: 150px"/></td>
                                 <tr>
                                     <td><input type="submit" value="submit"/></td>
                                 </tr>
                                 </table>
                             </form>
-                            <div style="margin-top: 10px"><a href="/register">Register</a> - <a href="/forgotPassword">Lost Password</a></div>
+                            <div style="margin: 15px; font-size: 12px"><a href="/register">Register</a> - <a href="/forgotPassword">Lost Password</a></div>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -86,12 +95,14 @@
         <div id="contentRight">
             <div id="contentRightInner">
                 {% block contentRight %}
-                <h1>Track Anchor Replacements and Bolting</h1>
+                <h2>Track Anchor Replacements and Bolting</h2>
+                <div class="contentRightBlock">
                 <p>Welcome to Climb Spotter, an anchor replacement and bolting tracking system.  Climb Spotter is designed
                 to give local climbing organizations and individuals a way to track climbing routes anchors and bolts either
                 for internal use or to provide to landowners or public agencies.</p>
                 <p>Climb Spotter can help you to maintain an accurate list of routes, dates equipped, type of hardware used and who
                 equipped the routes.</p>
+                </div>
                 {% endblock %}
             </div>
         </div>
@@ -105,5 +116,11 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+$(function() {
+    $("button, input:submit").button();
+    $("#reenter").click(function() { window.location.href = "/u/route/form"; });
+});
+</script>
 </body>
 </html>

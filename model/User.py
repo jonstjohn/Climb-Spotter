@@ -102,6 +102,30 @@ class User(object):
 
         return names
 
+    def privilege_ids(self):
+
+        db_user = self.__db_user()
+        privilege_ids = []
+        for role in db_user.roles:
+
+            # Administrator can do everything
+            if role.role_id == 1:
+
+                import db
+                from dbModel import DbPrivilege
+                session = db.session()
+                for privilege in session.query(DbPrivilege):
+
+                    privilege_ids.append(privilege.privilege_id)
+                
+            else:
+
+                for privilege in role.privileges:
+
+                    privilege_ids.append(privilege.privilege_id)
+
+        return privilege_ids
+
     def is_administrator(self):
 
         return 1 in self.role_ids()

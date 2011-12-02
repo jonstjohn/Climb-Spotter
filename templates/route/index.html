@@ -1,0 +1,14 @@
+{% extends 'auth_base.html' %}
+
+{% block contentRight %}
+    <h2>Route Work</h2>
+    <div style="width: 720px; background: #fff; font-size: 14px; padding: 2px 5px">Select: All | None</div>
+    <ul>
+    {% for route in routes %}
+        <li style="background: #eee; padding: 5px; width: 720px">
+            <input type="checkbox" style="margin: 2px 10px 2px 5px"/> <span style="width: 200px; float: left; font-size: 14px"><a href="/u/route/form/{{ route.route_work_id }}">{{ route.route_name }}</a></span>
+        </li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

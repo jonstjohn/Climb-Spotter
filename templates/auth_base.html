@@ -6,9 +6,9 @@
 {% block contentLeft %}
     <h2>Menu</h2>
         <ul class="userMenu">
-            <li class="active"><a href="/u/user">Manage Users</a></li>
-            <li><a href="/u/route/form">Submit Route</a></li>
-            <li><a href="/u/route/list">View Routes</a></li>
+            {% for item in menu_items %}
+                <li{% if item['active'] %} class="active"{% endif %}><a href="{{ item['url'] }}">{{ item['label'] }}</a></li>
+            {% endfor %}
         </ul>
 {% endblock %}
 

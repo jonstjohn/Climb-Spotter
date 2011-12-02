@@ -26,6 +26,39 @@ def login_required(f):
 
     return decorated_function
 
+#@app.context_processor
+#def inject_privileges():
+#
+#    if 'user_id' in session:
+#        from model import User
+#        user = User.User(session['user_id'])
+#        return dict(privilege_ids = user.privilege_ids())
+
+@app.context_processor
+def inject_menu():
+
+    menu_items = []
+    if 'user_id' in session:
+
+        from model import User
+        user = User.User(session['user_id'])
+        privilege_ids = user.privilege_ids()
+        if 1 in privilege_ids:
+            item = {'label': 'Manage Users', 'url': url_for('user_manage'), 'active': False}
+            if request.path.find('/u/user') == 0:
+                item['active'] = True
+            menu_items.append(item)
+        if 2 in privilege_ids:
+            item = {'label': 'Submit Route', 'url': url_for('route_form'), 'active': False}
+            if request.path.find('/u/route/form') == 0:
+                item['active'] = True
+            menu_items.append(item)
+        if 3 in privilege_ids:
+            item = {'label': 'View Data', 'url': url_for('route_list'), 'active': False}
+            if request.path.find('/u/route/list') == 0:
+                item['active'] = True
+            menu_items.append(item)
+    return dict(menu_items = menu_items)
 
 @app.route('/')
 def index(post_id = None, slug = None):
@@ -107,6 +140,7 @@ def doLogin():
     try:
         user = User.getInstanceFromUsernamePassword(request.form['username'], request.form['password'])
         session['username'] = user.username
+        session['user_id'] = user.user_id
         return redirect(url_for('user_manage'))
     except sqlalchemy.orm.exc.NoResultFound:
         return redirect(url_for('index'))
@@ -219,12 +253,93 @@ def route_form():
 
     return render_template('route/form.html', area_options = [('1', 'New River Gorge'), ('2', 'Meadow River Gorge')])
 
+# Route save
+@app.route('/u/route/save', methods = ['POST'])
+@login_required
+def route_save():
+
+    from model import RouteWork
+
+    errors = []
+    # Validate data
+    # Check for required fields
+    #labels = {'username': 'Username', 'email': 'E-mail', 'display_name': 'Display Name'}
+    #for el in ['username', 'email', 'display_name']:
+    #    if el not in request.form or len(request.form[el]) == 0:
+    #        errors.append("'{0}' is a required field.".format(labels[el]))
+
+    # If errors, display form again
+    if len(errors) != 0:
+
+        return render_template(
+            'user/form.html', error = "<br/>\n".join(errors),
+            original_username = request.form['original_username'],
+            username = request.form['username'],
+            email = request.form['email'],
+            display_name = request.form['display_name'],
+            active = int(request.form['active']),
+            role_ids = [role_id]
+        )
+
+    # If no errors, save user as not active and redirect to awaiting approval page
+    work = RouteWork.RouteWork()
+    work.route_id = request.form['route_id']
+    work.work_date = request.form['work_date']
+    work.who = request.form['who']
+    work.bolts_placed = request.form['bolts_placed']
+    if 'anchor_replaced' in request.form:
+        work.anchor_replaced = 1
+    else:
+        work.anchor_replaced = 0
+    if 'new_anchor' in request.form:
+        work.new_anchor = 1
+    else:
+        work.new_anchor = 0
+    work.user_id = session['user_id']
+    work.save()
+
+    return redirect(url_for('user_manage'))
+
+# Suggest area
+@app.route('/u/area/suggest')
+@login_required
+def area_suggest():
+
+    from model import Area
+    options = []
+    for area in Area.search(request.args.get('term')):
+
+       options.append({'label': area['name'], 'value': area['area_id']})
+
+    return json.dumps(options)
+
+# Suggest route
+@app.route('/u/route/suggest')
+@login_required
+def route_suggest():
+
+    from model import Route
+    options = []
+    for route in Route.search(request.args.get('term'), request.args.get('area_id')):
+
+        options.append({'label': route['name'], 'value': route['route_id']})
+
+    return json.dumps(options)
+
+# View route work data
+@app.route('/u/route/list')
+@login_required
+def route_list():
+
+    from model import RouteWork
+    return render_template('route/index.html', routes = RouteWork.getData())
 
 # Logout
 @app.route('/logout')
 def logout():
 
     session.pop('username', None)
+    session.pop('user_id', None)
     return redirect(url_for('index'))
 
 
