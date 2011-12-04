@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import CsConfiguration
 
 _engine = None
 _session = None
@@ -8,7 +9,13 @@ def engine():
 
     global _engine
     if _engine == None:
-        _engine = create_engine('mysql://cs_guest:csblubber@localhost/climbspotter_dev')
+       
+        c = CsConfiguration.CsConfiguration()
+        username = c.settings['database']['username']
+        password = c.settings['database']['password']
+        host = c.settings['database']['host']
+        database = c.settings['database']['database']
+        _engine = create_engine("mysql://{0}:{1}@{2}/{3}".format(username, password, host, database))
     return _engine
 
 def session():
