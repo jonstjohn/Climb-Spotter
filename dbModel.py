@@ -89,6 +89,13 @@ class DbRouteWorkNote(Base):
     note = Column(Text)
     created = Column(DATETIME)
 
+class DbDeployScript(Base):
+
+    __tablename__ = 'deploy_script'
+    path = Column(VARCHAR(150), primary_key = True)
+    start = Column(DATETIME)
+    end = Column(DATETIME)
+
 
 #class DbUserRole(Base):
 
