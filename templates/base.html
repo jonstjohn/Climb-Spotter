@@ -1,8 +1,10 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title>{% if title %}{{ title }}{% else %}Climb Spotter{% endif %}</title>
     <link rel="stylesheet" href="/static/css/main.css" type="text/css"/>
-    <style>
+    <style type="text/css">
 
         {{ css }}
 
@@ -11,8 +13,8 @@
     </style>
     <link rel="stylesheet" href="/static/css/jq.css" type="text/css"/>
     <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAr3tFP4-aIDSXrNZA9rx2VxSsm6LF6J7K9e2qSPZLVjjzNGyBFRRJpy8NTbDEYLxulguQV25yrGYQuw"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 </head>
 <body>
 <div id="wrap">
@@ -68,20 +70,23 @@
                             {% else %}
                             <form action="/doLogin" method="post">
                                 <table class="form">
+                                <tbody>
                                 <tr>
                                     <td><label for="username">Username:</label></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="text" name="username" id="username" size="8" style="width: 150px"/></td>
+                                    <td><input type="text" name="username" id="login_username" size="8" style="width: 150px"/></td>
                                 </tr>
                                 <tr>
                                     <td><label for="password">Password:</label></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="password" name="password" id="password" size="8" style="width: 150px"/></td>
+                                    <td><input type="password" name="password" id="login_password" size="8" style="width: 150px"/></td>
+                                </tr>
                                 <tr>
                                     <td><input type="submit" value="submit"/></td>
                                 </tr>
+                                </tbody>
                                 </table>
                             </form>
                             <div style="margin: 15px; font-size: 12px"><a href="/register">Register</a> - <a href="/forgotPassword">Lost Password</a></div>
