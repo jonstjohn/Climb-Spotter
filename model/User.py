@@ -134,6 +134,7 @@ class User(object):
 
         import db
         from dbModel import DbUser
+        from sqlalchemy import func
         session = db.session()
         if self.user_id:
             db_user = session.query(DbUser).filter(DbUser.user_id == self.user_id).one()
