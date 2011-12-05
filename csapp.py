@@ -99,7 +99,7 @@ def doRegister():
     # No spaces in username or password
     if ' ' in request.form['username']:
         errors.append('Username may not contain spaces')
-    if len(request.form['username']) not in range(4, 31):
+    if len(request.form['username']) not in range(4, 31)):
         errors.append('Username must be 4-30 characters long.')
     if len(request.form(['password']) not in range(6, 21)):
         errors.append('Password must be 6-20 characters long.')
