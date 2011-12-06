@@ -10,7 +10,6 @@ import json
 import db
 
 app = Flask(__name__)
-app.debug = True
 
 # set the secret key.  keep this really secret:
 app.secret_key = 'ADDefA221 -9981 Bdd%kkkll'
