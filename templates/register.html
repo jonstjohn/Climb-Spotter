@@ -11,7 +11,7 @@
         <div class="error">Please fix the following errors:<br/>{{ error|safe }}</div>
     {% endif %}
 
-    <form action="/doRegister" method="post">
+    <form action="/register-submit" method="post">
     <div class="build">
         <label for="username">Username</label>
         <div class="widget">
@@ -45,10 +45,10 @@
         </div>
     </div>
     <div class="build">
-        <label for="display_name">Real Name</label>
+        <label for="display_name">Display Name</label>
         <div class="widget">
             <input type="text" name="display_name" id="display_name" size="30" maxlength="30" value="{{ display_name }}"/>
-            <p class="help_text">My be displayed in the system.</p>
+            <p class="help_text">Use of real name encouraged.</p>
         </div>
     </div>
     <div class="build">

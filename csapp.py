@@ -15,12 +15,42 @@ app.debug = True
 # set the secret key.  keep this really secret:
 app.secret_key = 'ADDefA221 -9981 Bdd%kkkll'
 
+# Check privelege, used as decorator
+def check_priv(privilege_id):
+
+    def check_priv_decorator(f):
+        
+        @wraps(f)
+        
+        def decorated_function(*args, **kwargs):
+
+            # Redirect if not logged in
+            if not 'user_id' in session or not session['user_id']:
+
+                return redirect(url_for('index', next=request.url))
+
+            else:
+
+                # Check for valid role
+                from model import User
+                user = User.User(session['user_id'])
+                if not privilege_id in user.privilege_ids():
+
+                    return redirect(url_for('access_denied'))
+
+            # If logged in and privileged, display page
+            return f(*args, **kwargs)
+
+        return decorated_function
+
+    return check_priv_decorator
+
 # Check for valid login, used as decorator
 def login_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not 'username' in session or not session['username']:
+        if not 'user_id' in session or not session['user_id']:
             return redirect(url_for('index', next=request.url))
         return f(*args, **kwargs)
 
@@ -48,14 +78,14 @@ def inject_menu():
             if request.path.find('/u/user') == 0:
                 item['active'] = True
             menu_items.append(item)
-        if 2 in privilege_ids:
-            item = {'label': 'Submit Route', 'url': url_for('route_form'), 'active': False}
-            if request.path.find('/u/route/form') == 0:
-                item['active'] = True
-            menu_items.append(item)
         if 3 in privilege_ids:
             item = {'label': 'View Data', 'url': url_for('route_list'), 'active': False}
             if request.path.find('/u/route/list') == 0:
+                item['active'] = True
+            menu_items.append(item)
+        if 2 in privilege_ids:
+            item = {'label': 'Submit Route', 'url': url_for('route_form'), 'active': False}
+            if request.path.find('/u/route/form') == 0:
                 item['active'] = True
             menu_items.append(item)
     return dict(menu_items = menu_items)
@@ -65,14 +95,19 @@ def index(post_id = None, slug = None):
 
     return render_template('index.html')
 
+@app.route('/access-denied')
+def access_denied():
+
+    return render_template('denied.html')
+
 
 @app.route('/register')
 def register():
 
     return render_template('register.html')
 
-@app.route('/doRegister', methods=['POST'])
-def doRegister():
+@app.route('/register-submit', methods=['POST'])
+def register_submit():
 
     from model import User
 
@@ -124,29 +159,49 @@ def doRegister():
     user.email = request.form['email']
     user.display_name = request.form['display_name']
     user.save()
-    return redirect(url_for('user'))
+    
+    return redirect(url_for('register_done'))
 
 
-@app.route('/registerDone')
-def registerDone():
+@app.route('/send')
+def send():
+
+    import smtplib
+    from email.mime.text import MIMEText
+
+    msg = MIMEText('Test')
+    msg['Subject'] = 'Test Send'
+    msg['From'] = 'jon@drivecurrent.com'
+    msg['To'] = 'jonstjohn@gmail.com'
+    s = smtplib.SMTP('localhost')
+    s.sendmail('jon@drivecurrent.com', ['jonstjohn@gmail.com'], msg.as_string())
+    return 'test'
+
+@app.route('/register-done')
+def register_done():
 
     return render_template('registerDone.html')
     
 
-@app.route('/doLogin', methods=['POST'])
-def doLogin():
+@app.route('/login-submit', methods=['POST'])
+def login_submit():
     from model import User
 
     try:
         user = User.getInstanceFromUsernamePassword(request.form['username'], request.form['password'])
-        session['username'] = user.username
         session['user_id'] = user.user_id
-        return redirect(url_for('user_manage'))
+
+        role_ids = user.role_ids()
+        url = url_for('route_list')
+        if 1 in role_ids or 2 in role_ids:
+            url = url_for('user_manage')
+        return redirect(urL)
+
     except sqlalchemy.orm.exc.NoResultFound:
         return redirect(url_for('index'))
 
 @app.route('/u')
-@login_required
+@check_priv(1)
 def user():
 
     from model import User
@@ -154,6 +209,7 @@ def user():
 
 @app.route('/u/user')
 @login_required
+@check_priv(1)
 def user_manage():
 
     from model import User
@@ -161,7 +217,7 @@ def user_manage():
 
 
 @app.route('/u/user/activate')
-@login_required
+@check_priv(1)
 def user_activate():
 
     from model import User
@@ -172,7 +228,7 @@ def user_activate():
     return redirect(url_for('user'))
 
 @app.route('/u/user/form/<username>')
-@login_required
+@check_priv(1)
 def user_form(username):
 
     from model import User
@@ -193,6 +249,7 @@ def user_form(username):
     )
 
 @app.route('/u/user/save', methods = ['POST'])
+@check_priv(1)
 def user_save():
 
     from model import User
@@ -248,14 +305,14 @@ def user_save():
 
 # Route form
 @app.route('/u/route/form')
-@login_required
+@check_priv(2)
 def route_form():
 
     return render_template('route/form.html', area_options = [('1', 'New River Gorge'), ('2', 'Meadow River Gorge')])
 
 # Route save
 @app.route('/u/route/save', methods = ['POST'])
-@login_required
+@check_priv(2)
 def route_save():
 
     from model import RouteWork
@@ -328,7 +385,7 @@ def route_suggest():
 
 # View route work data
 @app.route('/u/route/list')
-@login_required
+@check_priv(3)
 def route_list():
 
     from model import RouteWork
@@ -342,104 +399,16 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('index'))
 
-
-
-
-
-
-
-
-
-
-
-@app.route('/feed/ios/news.json')
-def news():
-
-    page = 0
-    if request.args.get('page'):
-        page = int(request.args.get('page'))
-
-    articles = _get_articles(page, 20)
-    return json.dumps(articles)
-
-@app.route('/feed/ios/article')
-def article():
-
-    news_id = request.args.get('id')
-    return render_template('article.html', article = _get_article(news_id)) 
-
-@app.route('/news/listing')
-def newsListing():
-
-    return render_template('newsListing.json')
-
-@app.route('/video/listing')
-@app.route('/video/listing/<page>')
-def videoListing(page = 1):
-
-    return render_template("videos%s.json" % (page))
-
-@app.route('/video/youtube')
-def videoYouTube():
-
-    return render_template('youtube.html')
-
-@app.route('/video/vimeo')
-def videoVimeo():
-    
-    return render_template('vimeo.html')
-
-def _get_db():
-
-    return MySQLdb.connect(
-        host='localhost',
-        user = 'dpm',
-        passwd = 'dpm',
-        db = 'dpm',
-        cursorclass=MySQLdb.cursors.DictCursor
-    )
-
-def _get_articles(page = 0, per_page = 20):
-
-    db = _get_db()
-    cursor = db.cursor()
-    start = page * per_page
-    sql = "SELECT news_id, title, teaser, date_format(posted, '%%m/%%d/%%y') as post, thumb, url FROM dpm.news ORDER BY posted DESC LIMIT %i, %i" % (start, per_page)
-    cursor.execute(sql)
-    return cursor.fetchall()
-
-def _get_article(news_id):
-
-    db = _get_db()
-    cursor = db.cursor()
-    sql = "SELECT title, posted, posted_by, detail FROM dpm.news WHERE news_id = %s"
-    cursor.execute(sql, (news_id))
-
-    article = cursor.fetchone()
-    article['detail'] = _cleanup_detail(article['detail'])
-    return article
-
-def _cleanup_detail(detail):
-
-    import re
-
-    # Resolve relative paths
-    detail = detail.replace('src="/', 'src="http://www.dpmclimbing.com/')
-
-    # Re-size images
-    detail = re.sub(r'width: ([0-9]+)px; height: ([0-9]+)px;?', _resize_img, detail)
-
-    return detail
-
-def _resize_img(m):
-
-    #width = m.group(1)
-    #height = m.group(2)
-    return 'width: 300px'
-        
 if __name__ == '__main__':
     app.debug = True
     app.run(host = '0.0.0.0', port = 8080)
 
-# set the secret key.  keep this really secret:
-#app.secret_key = 'ADDefA221 -9981 Bdd%kkkll'
+ADMINS = ['jonstjohn@gmail.com']
+if not app.debug:
+    import logging
+    from logging.handlers import SMTPHandler
+    mail_handler = SMTPHandler('127.0.0.1',
+                               'error@climbspotter.com',
+                               ADMINS, 'YourApplication Failed')
+    mail_handler.setLevel(logging.ERROR)
+    app.logger.addHandler(mail_handler)

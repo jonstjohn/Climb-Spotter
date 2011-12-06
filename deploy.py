@@ -59,13 +59,13 @@ for root, subfolder, files in os.walk(deploy_script_dir):
                 script.start = func.now()
                 session.add(script)
 
-#                cmd = "mysql -u root -p%s %s < %s" % (mysql_root_password, database, absolute_path)
-#                print("Running deploy script '{0}' ({1})".format(absolute_path, cmd))
-#                a = os.popen(cmd)
-#                for line in a.readlines():
-#                    print line,
-
                 script.end = func.now()
                 session.commit()
+
+# Reload apache
+print('Reloading apache')
+print('-- output --')
+print(subprocess.check_output('sudo /etc/init.d/apache2 reload', shell = True))
+print('-- end output --')
 
 print("Done")
