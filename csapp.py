@@ -195,7 +195,7 @@ def login_submit():
         url = url_for('route_list')
         if 1 in role_ids or 2 in role_ids:
             url = url_for('user_manage')
-        return redirect(urL)
+        return redirect(url)
 
     except sqlalchemy.orm.exc.NoResultFound:
         return redirect(url_for('index'))
@@ -214,6 +214,11 @@ def user_manage():
 
     from model import User
     return render_template('user/index.html', users = User.getData())
+
+@app.route('/except')
+def exc():
+
+    raise NameError('HiThere')
 
 
 @app.route('/u/user/activate')
