@@ -204,7 +204,7 @@ def login_submit():
 def user():
 
     from model import User
-    return render_template('user/index.html', users = User.getData())
+    return render_template('user/index.html', users = User.get_data())
 
 @app.route('/u/user')
 @login_required
@@ -212,7 +212,7 @@ def user():
 def user_manage():
 
     from model import User
-    return render_template('user/index.html', users = User.getData())
+    return render_template('user/index.html', users = User.get_data())
 
 @app.route('/except')
 def exc():
@@ -309,10 +309,17 @@ def user_save():
 
 # Route form
 @app.route('/u/route/form')
+@app.route('/u/route/form/<route_work_id>')
 @check_priv(2)
-def route_form():
+def route_form(route_work_id = None):
 
-    return render_template('route/form.html', area_options = [('1', 'New River Gorge'), ('2', 'Meadow River Gorge')])
+    route_work = None
+    if route_work_id:
+
+        from model import RouteWork
+        route_work = RouteWork.RouteWork(route_work_id)
+
+    return render_template('route/form.html', area_options = [('1', 'New River Gorge'), ('2', 'Meadow River Gorge')], route_work = route_work)
 
 # Route save
 @app.route('/u/route/save', methods = ['POST'])
@@ -393,7 +400,7 @@ def route_suggest():
 def route_list():
 
     from model import RouteWork
-    return render_template('route/index.html', routes = RouteWork.getData())
+    return render_template('route/index.html', routes = RouteWork.get_data())
 
 # Logout
 @app.route('/logout')

@@ -183,13 +183,13 @@ def usernameExists(username, exclude_user_id = None):
 
 # Get data
 # @return array
-def getData(exclude_administrators = True):
+def get_data(exclude_administrators = True):
 
     from dbModel import DbUser
     import db
     session = db.session()
     users = []
-    for user in session.query(DbUser).order_by(DbUser.username):
+    for user in session.query(DbUser).order_by(DbUser.active.desc()).order_by(DbUser.display_name):
         is_administrator = False
         roles = []
         for role in user.roles:

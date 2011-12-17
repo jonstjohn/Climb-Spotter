@@ -77,18 +77,22 @@ class RouteWork(object):
 
 # Get data
 # @return array
-def getData(exclude_administrators = True):
+def get_data(exclude_administrators = True):
 
     from dbModel import DbRouteWork
-    import db
+    import db, time
     session = db.session()
     route_works = []
-    for route_work in session.query(DbRouteWork).order_by(DbRouteWork.work_date):
+    for route_work in session.query(DbRouteWork).order_by(DbRouteWork.work_date.desc()):
+        work_date = None
+        if route_work.work_date:
+            work_date_struct = time.strptime(str(route_work.work_date), '%Y-%m-%d %H:%M:%S')
+            work_date = time.strftime('%m/%d/%Y', work_date_struct)
         route_works.append({
             'route_work_id': route_work.route_work_id,
             'route_name': route_work.route.name,
             'area_name': route_work.route.area.name,
-            'work_date': route_work.work_date,
+            'work_date': work_date,
             'who': route_work.who,
             'bolts_placed': route_work.bolts_placed,
             'anchor_replaced': route_work.anchor_replaced,

@@ -2,11 +2,13 @@
 
 {% block contentRight %}
     <h2>Manage Users (5)</h2>
-    <div style="width: 720px; background: #fff; font-size: 14px; padding: 2px 5px">Select: All | None</div>
+    <!--<div style="width: 720px; background: #fff; font-size: 14px; padding: 2px 5px">Select: All | None</div>-->
     <ul>
     {% for user in users %}
-        <li style="background: #eee; padding: 5px; width: 720px">
-            <input type="checkbox" style="margin: 2px 10px 2px 5px"/> <span style="width: 200px; float: left; font-size: 14px"><a href="/u/user/form/{{ user.username }}">{{ user.display_name }}</a> ({{ user.username }})</span>
+        <li style="background: {{ loop.cycle('#eee', '#fff') }}; padding: 5px; width: 720px; font-size: 14px">
+            <!--<input type="checkbox" style="margin: 2px 10px 2px 5px"/>--><span style="width: 500px; float: left; font-size: 14px"><a href="/u/user/form/{{ user.username }}">{{ user.display_name }} ({{ user.username }})</a></span>
+            <span style="width: 120px; float: left">{% if user.roles %}{{ user.roles }}{% else %}--{% endif %}</span>
+            <span style="width: 80px; float: left; font-size: 14px">{% if user.active == 1 %}Active{% else %}Not Active{% endif %}</span>
         </li>
     {% endfor %}
     </ul>
