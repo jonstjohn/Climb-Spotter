@@ -1,0 +1,16 @@
+{% extends 'auth_base.html' %}
+
+{% block contentRight %}
+    <h2>Route Work</h2>
+    <!--<div style="width: 720px; background: #fff; font-size: 14px; padding: 2px 5px">Select: All | None</div>-->
+    <ul>
+    {% for route in routes %}
+        <li style="background: {{ loop.cycle('#eee', '#fff') }}; padding: 5px; width: 720px; font-size: 14px">
+            <!--<input type="checkbox" style="margin: 2px 10px 2px 5px"/>-->
+            <span style="width: 600px; float: left"><a href="/u/route-work/form/{{ route.route_work_id }}">{{ route.route_name }}</a> by {{ route.who }}</span>
+            <span style="width: 100px; float: left">{{ route.work_date }}</span>
+        </li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

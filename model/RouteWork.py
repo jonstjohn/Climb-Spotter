@@ -62,6 +62,21 @@ class RouteWork(object):
 
         session.commit()
 
+    def get_route_name(self):
+   
+        rw = self.__db_route_work()
+        return rw.route.name
+
+    def get_area_name(self):
+
+        rw = self.__db_route_work()
+        return rw.route.area.name
+
+    def get_area_id(self):
+
+        rw = self.__db_route_work()
+        return rw.route.area.area_id
+
     def __db_route_work(self):
 
         import db

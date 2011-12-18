@@ -14,6 +14,13 @@ app = Flask(__name__)
 # set the secret key.  keep this really secret:
 app.secret_key = 'ADDefA221 -9981 Bdd%kkkll'
 
+# Convert sql date to form date
+def __sql_to_form(sql):
+
+    import time
+    struct_struct = time.strptime(str(sql), '%Y-%m-%d %H:%M:%S')
+    return time.strftime('%m/%d/%Y', struct_struct)
+
 # Check privelege, used as decorator
 def check_priv(privilege_id):
 
@@ -78,13 +85,13 @@ def inject_menu():
                 item['active'] = True
             menu_items.append(item)
         if 3 in privilege_ids:
-            item = {'label': 'View Data', 'url': url_for('route_list'), 'active': False}
-            if request.path.find('/u/route/list') == 0:
+            item = {'label': 'View Route Work', 'url': url_for('route_list'), 'active': False}
+            if request.path.find('/u/route-work/list') == 0:
                 item['active'] = True
             menu_items.append(item)
         if 2 in privilege_ids:
-            item = {'label': 'Submit Route', 'url': url_for('route_form'), 'active': False}
-            if request.path.find('/u/route/form') == 0:
+            item = {'label': 'Submit Route Work', 'url': url_for('route_work_form'), 'active': False}
+            if request.path.find('/u/route-work/form') == 0:
                 item['active'] = True
             menu_items.append(item)
     return dict(menu_items = menu_items)
@@ -308,10 +315,10 @@ def user_save():
     return redirect(url_for('user_manage'))
 
 # Route form
-@app.route('/u/route/form')
-@app.route('/u/route/form/<route_work_id>')
+@app.route('/u/route-work/form')
+@app.route('/u/route-work/form/<route_work_id>')
 @check_priv(2)
-def route_form(route_work_id = None):
+def route_work_form(route_work_id = None):
 
     route_work = None
     if route_work_id:
@@ -319,34 +326,58 @@ def route_form(route_work_id = None):
         from model import RouteWork
         route_work = RouteWork.RouteWork(route_work_id)
 
-    return render_template('route/form.html', area_options = [('1', 'New River Gorge'), ('2', 'Meadow River Gorge')], route_work = route_work)
+    return render_template(
+        'route_work/form.html', 
+        area_options = [('1', 'New River Gorge'), ('2', 'Meadow River Gorge')],
+        route = route_work.get_route_name() if route_work else '',
+        route_id = route_work.route_id if route_work else '',
+        area = route_work.get_area_name() if route_work else '',
+        area_id = route_work.get_area_id() if route_work else '',
+        work_date = __sql_to_form(route_work.work_date) if route_work else '',
+        who = route_work.who if route_work else '',
+        bolts_placed = route_work.bolts_placed if route_work else '',
+        anchor_replaced = route_work.anchor_replaced if route_work else '',
+        new_anchor = route_work.new_anchor if route_work else '',
+#        notes = route_work.notes if route_work else '',,
+        route_work = route_work if route_work else ''
+    )
 
 # Route save
-@app.route('/u/route/save', methods = ['POST'])
+@app.route('/u/route-work/save', methods = ['POST'])
 @check_priv(2)
-def route_save():
+def route_work_save():
 
     from model import RouteWork
 
     errors = []
     # Validate data
     # Check for required fields
-    #labels = {'username': 'Username', 'email': 'E-mail', 'display_name': 'Display Name'}
-    #for el in ['username', 'email', 'display_name']:
-    #    if el not in request.form or len(request.form[el]) == 0:
-    #        errors.append("'{0}' is a required field.".format(labels[el]))
+    labels = {'area': 'Area', 'route': 'Route', 'work_date': 'Completed On', 'bolts_placed': 'Bolts', 'anchor': 'Anchor', 'notes': 'Notes'}
+    for el in ['area', 'route', 'work_date', 'bolts_placed']:
+        if el not in request.form or len(request.form[el]) == 0:
+            errors.append("'{0}' is a required field.".format(labels[el]))
+
+    # Make sure route id matches route name
+
+
+    # Make sure area id matches area name
 
     # If errors, display form again
     if len(errors) != 0:
 
         return render_template(
             'user/form.html', error = "<br/>\n".join(errors),
-            original_username = request.form['original_username'],
-            username = request.form['username'],
-            email = request.form['email'],
-            display_name = request.form['display_name'],
-            active = int(request.form['active']),
-            role_ids = [role_id]
+            area_options = [('1', 'New River Gorge'), ('2', 'Meadow River Gorge')],
+            route = request.form['route'],
+            route_id = request.form['route_id'],
+            area = request.form['area'],
+            area_id = request.form['area_id'],
+            work_date = request.form['work_date'],
+            who = request.form['who'],
+            bolts_placed = request.form['bolts_placed'],
+            anchor_replaced = '1' if request.form['anchor'] == 'replaced' else '',
+            new_anchor = '1' if request.form['anchor'] == 'new' else '',
+            notes = request.form['notes']
         )
 
     # If no errors, save user as not active and redirect to awaiting approval page
@@ -354,7 +385,7 @@ def route_save():
     work.route_id = request.form['route_id']
     work.work_date = request.form['work_date']
     work.who = request.form['who']
-    work.bolts_placed = request.form['bolts_placed']
+    work.bolts_placed = request.form['bolts_placed'] if len(request.form['bolts_placed']) > 0 else '0'
     if 'anchor_replaced' in request.form:
         work.anchor_replaced = 1
     else:
@@ -366,7 +397,9 @@ def route_save():
     work.user_id = session['user_id']
     work.save()
 
-    return redirect(url_for('user_manage'))
+    flash('Route work saved')
+
+    return redirect(url_for('route_list'))
 
 # Suggest area
 @app.route('/u/area/suggest')
@@ -395,12 +428,12 @@ def route_suggest():
     return json.dumps(options)
 
 # View route work data
-@app.route('/u/route/list')
+@app.route('/u/route-work/list')
 @check_priv(3)
 def route_list():
 
     from model import RouteWork
-    return render_template('route/index.html', routes = RouteWork.get_data())
+    return render_template('route_work/index.html', routes = RouteWork.get_data())
 
 # Logout
 @app.route('/logout')
