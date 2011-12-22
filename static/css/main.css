@@ -105,7 +105,7 @@ div.highlight { padding: 5px; margin: 20px 0; border-width: 1px 0; border-color:
 div#byline { font-size: 12px; color: #ccc }
 
 div#flashWrap {  width: 100% }
-div#flash { width: 960px; margin: 10px auto 0 auto; color: green }
+div#flash { width: 950px; margin: 10px auto 0 auto; color: green; border: 1px solid #ccc; background: #fff; padding: 5px }
 
 .userMenu li { background: #fff; border-bottom: 1px solid #d8d8d8; height: 30px }
 .userMenu li.active { background-color: #CFDBE7 }

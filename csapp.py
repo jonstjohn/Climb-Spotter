@@ -21,6 +21,12 @@ def __sql_to_form(sql):
     struct_struct = time.strptime(str(sql), '%Y-%m-%d %H:%M:%S')
     return time.strftime('%m/%d/%Y', struct_struct)
 
+def __form_to_sql(form):
+
+    import time
+    struct_struct = time.strptime(str(form), '%m/%d/%Y')
+    return time.strftime('%Y-%m-%d 00:00:00', struct_struct)
+
 # Check privelege, used as decorator
 def check_priv(privilege_id):
 
@@ -339,7 +345,7 @@ def route_work_form(route_work_id = None):
         anchor_replaced = route_work.anchor_replaced if route_work else '',
         new_anchor = route_work.new_anchor if route_work else '',
 #        notes = route_work.notes if route_work else '',,
-        route_work = route_work if route_work else ''
+        route_work_id = route_work_id if route_work_id else ''
     )
 
 # Route save
@@ -358,15 +364,24 @@ def route_work_save():
             errors.append("'{0}' is a required field.".format(labels[el]))
 
     # Make sure route id matches route name
-
+    if len(request.form['route_id']):
+        from model import Route
+        route = Route.Route(request.form['route_id'])
+        if route.name != request.form['route']:
+            errors.append("There was a problem finding the route that you entered, please try again.")
 
     # Make sure area id matches area name
+    if len(request.form['area_id']):
+        from model import Area
+        area = Area.Area(request.form['area_id'])
+        if (area.name != request.form['area']):
+            errors.append('There was a problem finding the area that you entered, please try again.')
 
     # If errors, display form again
     if len(errors) != 0:
 
         return render_template(
-            'user/form.html', error = "<br/>\n".join(errors),
+            'route_work/form.html', error = "<br/>\n".join(errors),
             area_options = [('1', 'New River Gorge'), ('2', 'Meadow River Gorge')],
             route = request.form['route'],
             route_id = request.form['route_id'],
@@ -381,16 +396,16 @@ def route_work_save():
         )
 
     # If no errors, save user as not active and redirect to awaiting approval page
-    work = RouteWork.RouteWork()
+    work = RouteWork.RouteWork(request.form['route_work_id'])
     work.route_id = request.form['route_id']
-    work.work_date = request.form['work_date']
+    work.work_date = __form_to_sql(request.form['work_date'])
     work.who = request.form['who']
     work.bolts_placed = request.form['bolts_placed'] if len(request.form['bolts_placed']) > 0 else '0'
-    if 'anchor_replaced' in request.form:
+    if request.form['anchor'] == 'replaced':
         work.anchor_replaced = 1
     else:
         work.anchor_replaced = 0
-    if 'new_anchor' in request.form:
+    if request.form['anchor'] == 'new':
         work.new_anchor = 1
     else:
         work.new_anchor = 0
