@@ -210,6 +210,7 @@ def login_submit():
         return redirect(url)
 
     except sqlalchemy.orm.exc.NoResultFound:
+        flash('Invalid username and/or password')
         return redirect(url_for('index'))
 
 @app.route('/u')

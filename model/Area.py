@@ -4,6 +4,7 @@ class Area(object):
     area_id = None
     name = None
     created = None
+    parent_id = None
 
     # Constructor
     # @param integer area_id (Optional) Area work id
@@ -34,11 +35,25 @@ class Area(object):
 
         db_area = self.__db_area()
         db_area.name = self.name
-        db_area.created = self.created
 
         # Add if it does not exist already in db
         if not self.area_id:
             session.add(db_area)
+
+        # Create associations - add parent relationship plus any additional parents of parent
+        if self.parent_id:
+
+            # Select all ancestors of parent id, since this will also be an ancestor of area
+            parent = session.query(DbArea).filter(DbArea.area_id == self.parent_id).one()
+            for a in parent.ascendents:
+                db_area.ascendents.append(a)
+
+            # insert self-referential record
+            db_area.ascendents.append(db_area)
+
+
+        # Consider whether or not this area was moved - delete previous associations and re-create all others
+        session.commit()
 
     def __db_area(self):
 

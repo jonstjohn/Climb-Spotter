@@ -9,6 +9,11 @@ user_role_table = Table('user_role', Base.metadata,
     Column('role_id', Integer, ForeignKey('role.role_id'))
 )
 
+area_relationship_table = Table('area_relationship', Base.metadata,
+    Column('ancestor', Integer, ForeignKey('area.area_id')),
+    Column('descendent', Integer, ForeignKey('area.area_id'))
+)
+
 class DbUser(Base):
 
     __tablename__ = 'user'
@@ -51,6 +56,10 @@ class DbArea(Base):
     name = Column(VARCHAR(50))
     created = Column(DATETIME)
 
+    descendents = relationship('DbArea', backref = 'ancestors', secondary = area_relationship_table,
+        primaryjoin = area_id == area_relationship_table.c.ancestor,
+        secondaryjoin = area_id == area_relationship_table.c.descendent)
+
 class DbRoute(Base):
 
     __tablename__ = 'route'
@@ -61,6 +70,11 @@ class DbRoute(Base):
     created = Column(DATETIME)
 
     area = relationship("DbArea")
+
+    areas = relationship('DbArea', backref = 'routes', secondary = area_relationship_table,
+        primaryjoin = area_id == area_relationship_table.c.ancestor,
+        secondaryjoin = area_id == area_relationship_table.c.descendent,
+        foreign_keys=[area_relationship_table.c.ancestor, area_relationship_table.c.descendent])
 
 class DbRouteWork(Base):
 

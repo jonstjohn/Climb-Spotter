@@ -16,7 +16,6 @@ class CsConfiguration:
         def init(self, code_dir = None):
 
             self.config = ConfigParser.ConfigParser()
-            print(code_dir)
             
             # Use relative path to this classes current directory
             if code_dir is None:
