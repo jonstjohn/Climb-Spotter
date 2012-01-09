@@ -5,6 +5,8 @@ class Area(object):
     name = None
     created = None
     parent_id = None
+    latitude = None
+    longitude = None
 
     # Constructor
     # @param integer area_id (Optional) Area work id
@@ -25,6 +27,8 @@ class Area(object):
         db_area = self.__db_area()
         self.created = db_area.created
         self.name = db_area.name
+        self.latitude = db_area.latitude
+        self.longitude = db_area.longitude
 
     def save(self):
 
@@ -35,6 +39,8 @@ class Area(object):
 
         db_area = self.__db_area()
         db_area.name = self.name
+        db_area.latitude = self.latitude
+        db_area.longitude = self.longitude
 
         # Add if it does not exist already in db
         if not self.area_id:
@@ -45,11 +51,11 @@ class Area(object):
 
             # Select all ancestors of parent id, since this will also be an ancestor of area
             parent = session.query(DbArea).filter(DbArea.area_id == self.parent_id).one()
-            for a in parent.ascendents:
-                db_area.ascendents.append(a)
+            for a in parent.ancestors:
+                db_area.ancestors.append(a)
 
-            # insert self-referential record
-            db_area.ascendents.append(db_area)
+        # insert self-referential record
+        db_area.ancestors.append(db_area)
 
 
         # Consider whether or not this area was moved - delete previous associations and re-create all others
@@ -69,14 +75,21 @@ class Area(object):
 
         return db_area
 
-def search(str):
+def search(str, exact = False, parent_id = None):
 
     from dbModel import DbArea
 
     import db
     session = db.session()
     areas = []
-    for area in session.query(DbArea).filter(DbArea.name.like("{0}%".format(str))).order_by(DbArea.name):
+
+    srch = str
+    if not exact:
+        srch = "{0}%".format(srch)
+
+    query = session.query(DbArea).filter(DbArea.name.like(srch)).order_by(DbArea.name)
+
+    for area in query:
         areas.append({
             'area_id': area.area_id,
             'name': area.name,

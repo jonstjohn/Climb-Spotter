@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block contentRight %}
+
+    <h2>Register</h2>
+
+    <div class="contentRightBlock">
+    <p>Send us your questions or comments below.</p>
+
+    {% if error %}
+        <div class="error">Please fix the following errors:<br/>{{ error|safe }}</div>
+    {% endif %}
+
+    <form action="/contact-submit" method="post">
+    <div class="build">
+        <label for="email">Email</label>
+        <div class="widget">
+            <input type="text" name="email" id="email" size="30" maxlength="60" value="{{ email }}"/>
+        </div>
+    </div>
+    <div class="build">
+        <label for="message">Notes</label>
+        <div class="widget">
+            <textarea name="message" id="message" rows="5" cols="50" style="width: 400px">{{ message }}</textarea>
+        </div>
+    </div>
+
+    <div class="build">
+        <label>&nbsp;</label>
+        <div class="widget">
+            <input type="submit" value="submit"/>
+        </div>
+    </div>
+
+
+    </form>
+    </div>
+{% endblock %}

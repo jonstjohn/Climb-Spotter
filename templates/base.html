@@ -28,8 +28,7 @@
                 <div id="headerRightNav">
                     <ul>
                         <li class="first"><a href="/">Home</a></li>
-                        <li><a href="/areas">Areas</a></li>
-                        <li><a href="/about">About</a></li>
+                        <li><a href="/contact">Contact</a></li>
                         {% if session.user_id %}
                             <li><a href="/logout">Logout</a></li>
                         {% else %}
@@ -124,7 +123,7 @@
 <script type="text/javascript">
 $(function() {
     $("button, input:submit").button();
-    $("#reenter").click(function() { window.location.href = "/u/route/form"; });
+    $("#reenter").click(function() { window.location.href = "/u/route-work/list"; });
     $("#register_now").click(function() { window.location.href = "/register"; });
 
 });

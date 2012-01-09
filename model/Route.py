@@ -36,11 +36,12 @@ class Route(object):
         db_route = self.__db_route()
         db_route.name = self.name
         db_route.area_id = self.area_id
-        db_route.created = self.created
 
         # Add if it does not exist already in db
         if not self.route_id:
             session.add(db_route)
+
+        session.commit()
 
     def __db_route(self):
 

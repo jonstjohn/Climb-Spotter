@@ -1,0 +1,2 @@
+ALTER TABLE area ADD latitude DECIMAL(10,6);
+ALTER TABLE area ADD longitude DECIMAL(10,6);

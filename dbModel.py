@@ -55,6 +55,15 @@ class DbArea(Base):
     area_id = Column(Integer, primary_key = True)
     name = Column(VARCHAR(50))
     created = Column(DATETIME)
+    latitude = Column(DECIMAL(10, 6))
+    longitude = Column(DECIMAL(10, 6))
+
+#    rs = relationship('DbRoute', secondary = area_relationship_table,
+#        primaryjoin = area_id == area_relationship_table.c.ancestor,
+#        secondaryjoin = "DbRoute.area_id == area_relationship_table.c.descendent")
+#        foreign_keys=[area_relationship_table.c.descendent, area_relationship_table.c.ancestor])
+
+#    tmp = relationship('DbRoute', primaryjoin = "DbArea.area_id == DbRoute.area_id")
 
     descendents = relationship('DbArea', backref = 'ancestors', secondary = area_relationship_table,
         primaryjoin = area_id == area_relationship_table.c.ancestor,

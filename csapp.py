@@ -118,6 +118,40 @@ def register():
 
     return render_template('register.html')
 
+@app.route('/contact')
+def contact():
+    
+    return render_template('contact.html')
+
+@app.route('/contact-submit', methods=['POST'])
+def contact_submit():
+
+    import smtplib
+    import string
+ 
+    subject = "Test email from Python"
+    to = "jonstjohn@gmail.com"
+    frm = request.form['email']
+    text = request.form['message']
+    body = string.join((
+        "From: admin@climbspotter.com", # % frm,
+        "Reply-to: %s" % frm,
+        "To: %s" % to,
+        "Subject: %s" % subject ,
+        "",
+        text
+    ), "\r\n")
+    server = smtplib.SMTP('localhost')
+    server.sendmail(frm, [to], body)
+    server.quit()
+
+    return redirect(url_for('contact_done'))
+
+@app.route('/contact-done')
+def contact_done():
+
+    return render_template('contact_done.html')
+
 @app.route('/register-submit', methods=['POST'])
 def register_submit():
 
