@@ -129,7 +129,7 @@ def contact_submit():
     import smtplib
     import string
  
-    subject = "Test email from Python"
+    subject = "Contact Form from ClimbSpotter.com"
     to = "jonstjohn@gmail.com"
     frm = request.form['email']
     text = request.form['message']
@@ -205,6 +205,26 @@ def register_submit():
     user.email = request.form['email']
     user.display_name = request.form['display_name']
     user.save()
+
+    import smtplib
+    import string
+
+    subject = "New Registration on ClimbSpotter.com"
+    to = "jonstjohn@gmail.com"
+    frm = request.form['email']
+    text = "A new registration has been received for '{0}' ({1})".format(request.form['display_name'], request.form['username'])
+    body = string.join((
+        "From: admin@climbspotter.com", # % frm,
+        "Reply-to: %s" % frm,
+        "To: %s" % to,
+        "Subject: %s" % subject ,
+        "",
+        text
+    ), "\r\n")
+    server = smtplib.SMTP('localhost')
+    server.sendmail(frm, [to], body)
+    server.quit()
+
     
     return redirect(url_for('register_done'))
 

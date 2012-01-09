@@ -64,6 +64,11 @@ def search(str, area_id = None):
     session = db.session()
     routes = []
 
+    #SELECT route.route_id, route.name
+    #FROM area INNER JOIN area_relationship ON area.area_id = area_relationship.ancestor
+    #INNER JOIN route ON route.area_id = area_relationship.descendent
+    #WHERE area.area_id = 1
+
     query = session.query(DbRoute).filter(DbRoute.name.like("{0}%".format(str))).order_by(DbRoute.name);
     if area_id:
         query = query.filter(DbRoute.area_id == area_id)
