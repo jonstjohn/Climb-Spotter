@@ -59,7 +59,7 @@ class User(object):
 
         import db
         session = db.session()
-        self.password = session.query('encrypted_password').from_statement("SELECT SHA1(:password) AS encrypted_password").params(password = password).one()
+        self.password = session.query('encrypted_password').from_statement("SELECT SHA1(:password) AS encrypted_password").params(password = password).one()[0]
 
     def activate(self):
 
