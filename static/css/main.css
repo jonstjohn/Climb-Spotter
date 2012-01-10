@@ -1,6 +1,6 @@
 * { margin:0; padding:0; }
 body, textarea, table { font: 16px/1.5 helvetica, arial, sans-serif; color: #333 }
-body { background: url('/static/img/grid.png') repeat }
+body { background: url('/static/img/sn3.jpg') top left repeat }
 textarea { padding: 5px }
 
 /*h1 { font-size: 22px; text-transform: uppercase }*/
@@ -95,10 +95,10 @@ div#content { width: 960px; margin: 10px auto; }
 div#contentLeft { width: 190px; float: left }
 div#contentLeftInner {  }
 div.leftBlock { margin-bottom: 10px }
-div.leftBlockInner { padding: 5px }
+div.leftBlockInner { padding: 5px;  border-right: 1px solid #d8d8d8; border-left: 1px solid #d8d8d8; border-bottom: 1px solid #d8d8d8 }
 div#contentRight { width: 730px; float: left; margin-left: 20px }
 div#contentRightInner { }
-.contentRightBlock { padding: 10px; background: #fff; border-right: 1px solid #eee; border-left: 1px solid #ee; border-bottom: 1px solid #d8d8d8 }
+.contentRightBlock { padding: 10px; background: #fff; border-right: 1px solid #d8d8d8; border-left: 1px solid #d8d8d8; border-bottom: 1px solid #d8d8d8 }
 
 div.highlight { padding: 5px; margin: 20px 0; border-width: 1px 0; border-color: #ccc; border-style: solid; overflow: auto }
 

@@ -58,7 +58,7 @@ class DbArea(Base):
     latitude = Column(DECIMAL(10, 6))
     longitude = Column(DECIMAL(10, 6))
 
-    routes = relationship("DbRoute")
+#    routes = relationship("DbRoute")
 
 #    rs = relationship('DbRoute', secondary = area_relationship_table,
 #        primaryjoin = area_id == area_relationship_table.c.ancestor,
@@ -82,10 +82,12 @@ class DbRoute(Base):
 
     area = relationship("DbArea")
 
-#    areas = relationship('DbArea', backref = 'routes', secondary = area_relationship_table,
-#        primaryjoin = area_id == area_relationship_table.c.ancestor,
-#        secondaryjoin = area_id == area_relationship_table.c.descendent,
-#        foreign_keys=[area_relationship_table.c.ancestor, area_relationship_table.c.descendent])
+    areas = relationship('DbArea', backref = backref('routes', order_by = 'DbRoute.name'),
+        secondary = area_relationship_table,
+        primaryjoin = area_id == area_relationship_table.c.descendent,
+        secondaryjoin = DbArea.area_id == area_relationship_table.c.ancestor,
+        innerjoin = True, order_by = DbArea.name,
+        foreign_keys=[area_relationship_table.c.ancestor, area_relationship_table.c.descendent])
 
 class DbRouteWork(Base):
 

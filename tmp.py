@@ -16,16 +16,17 @@ for area in db_route.area.ancestors:
 
 print()
 routes = []
-db_area = session.query(DbArea).filter(DbArea.area_id == 4).one()
+db_area = session.query(DbArea).filter(DbArea.area_id == 11).one()
 print("Routes for {0}".format(db_area.name))
-for area in db_area.descendents:
+#for area in db_area.descendents:
     #print("--{0} ({1})".format(area.name, area.area_id))
-    for route in area.routes:
-        routes.append([route.route_id, route.name])
-#for route in db_area.routes:
+#    for route in area.routes:
+#        routes.append([route.route_id, route.name])
+for route in db_area.routes:
 
-#    print(route.name)
+    print("  {0}".format(route.name))
 
+sys.exit(1)
 from operator import itemgetter, attrgetter
 
 routes.sort(key = itemgetter(1))
