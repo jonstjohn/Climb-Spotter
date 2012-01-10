@@ -67,11 +67,19 @@ def search(str, area_id = None):
     #SELECT route.route_id, route.name
     #FROM area INNER JOIN area_relationship ON area.area_id = area_relationship.ancestor
     #INNER JOIN route ON route.area_id = area_relationship.descendent
-    #WHERE area.area_id = 1
+    #WHERE area.area_id = 1 and route.name like 'str%'
 
     query = session.query(DbRoute).filter(DbRoute.name.like("{0}%".format(str))).order_by(DbRoute.name);
+
+    # If area id is passed, return routes for all descendents of area
     if area_id:
-        query = query.filter(DbRoute.area_id == area_id)
+        from dbModel import DbArea
+        area_ids = []
+        # Get descendents
+        db_area = session.query(DbArea).filter(DbArea.area_id == area_id).one()
+        for area in db_area.descendents:
+            area_ids.append(area.area_id)
+        query = query.filter(DbRoute.area_id.in_(area_ids))
     for route in query:
         routes.append({
             'route_id': route.route_id,

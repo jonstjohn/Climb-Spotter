@@ -2,9 +2,9 @@ from dbModel import DbArea, DbRoute
 from model import Area, Route
 import db, sys
 
-import logging
-logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+#import logging
+#logging.basicConfig()
+#logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 session = db.session()
 
@@ -14,11 +14,25 @@ for area in db_route.area.ancestors:
 
     print(area.name)
 
-print("Routes for Kaymoor")
+print()
+routes = []
 db_area = session.query(DbArea).filter(DbArea.area_id == 4).one()
-for route in db_area.routes:
+print("Routes for {0}".format(db_area.name))
+for area in db_area.descendents:
+    #print("--{0} ({1})".format(area.name, area.area_id))
+    for route in area.routes:
+        routes.append([route.route_id, route.name])
+#for route in db_area.routes:
 
-    print(route.name)
+#    print(route.name)
+
+from operator import itemgetter, attrgetter
+
+routes.sort(key = itemgetter(1))
+
+for route in routes:
+
+    print("{0} ({1})".format(route[0], route[1]))
 
 sys.exit(1)
 
