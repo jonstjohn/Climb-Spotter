@@ -1,12 +1,19 @@
-from dbModel import DbArea, DbRoute
+from dbModel import DbArea, DbRoute, DbRouteWork, DbRouteWorkNote
 from model import Area, Route
 import db, sys
 
-#import logging
-#logging.basicConfig()
-#logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+import logging
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 session = db.session()
+
+db_route_work = session.query(DbRouteWork).filter(DbRouteWork.route_work_id == 1).one()
+for note in db_route_work.notes:
+
+    print note.note
+
+sys.exit(1)
 
 print("Areas for Leave it to Jesus")
 db_route = session.query(DbRoute).filter(DbRoute.route_id == 1).one()

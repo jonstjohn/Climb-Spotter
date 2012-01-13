@@ -399,8 +399,8 @@ def route_work_form(route_work_id = None):
         bolts_placed = route_work.bolts_placed if route_work else '',
         anchor_replaced = route_work.anchor_replaced if route_work else '',
         new_anchor = route_work.new_anchor if route_work else '',
-#        notes = route_work.notes if route_work else '',,
-        route_work_id = route_work_id if route_work_id else ''
+        route_work_id = route_work_id if route_work_id else '',
+        info = route_work.info if route_work and route_work.info else ''
     )
 
 # Route save
@@ -413,7 +413,7 @@ def route_work_save():
     errors = []
     # Validate data
     # Check for required fields
-    labels = {'area': 'Area', 'route': 'Route', 'work_date': 'Completed On', 'bolts_placed': 'Bolts', 'anchor': 'Anchor', 'notes': 'Notes'}
+    labels = {'area': 'Area', 'route': 'Route', 'work_date': 'Completed On', 'bolts_placed': 'Bolts', 'anchor': 'Anchor', 'info': 'Notes'}
     for el in ['area', 'route', 'work_date', 'bolts_placed']:
         if el not in request.form or len(request.form[el]) == 0:
             errors.append("'{0}' is a required field.".format(labels[el]))
@@ -447,10 +447,10 @@ def route_work_save():
             bolts_placed = request.form['bolts_placed'],
             anchor_replaced = '1' if request.form['anchor'] == 'replaced' else '',
             new_anchor = '1' if request.form['anchor'] == 'new' else '',
-            notes = request.form['notes']
+            info = request.form['info']
         )
 
-    # If no errors, save user as not active and redirect to awaiting approval page
+    # If no errors, save route work
     work = RouteWork.RouteWork(request.form['route_work_id'])
     work.route_id = request.form['route_id']
     work.work_date = __form_to_sql(request.form['work_date'])
@@ -465,9 +465,22 @@ def route_work_save():
     else:
         work.new_anchor = 0
     work.user_id = session['user_id']
+    work.info = request.form['info']
     work.save()
 
     flash('Route work saved')
+
+    return redirect(url_for('route_list'))
+
+@app.route('/u/route-work/delete/<route_work_id>')
+@check_priv(2)
+def route_work_delete(route_work_id):
+
+    from model import RouteWork
+    rw = RouteWork.RouteWork(route_work_id)
+    rw.delete()
+
+    flash('Route work deleted')
 
     return redirect(url_for('route_list'))
 

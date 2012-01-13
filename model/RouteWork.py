@@ -11,6 +11,7 @@ class RouteWork(object):
     anchor_replaced = None
     new_anchor = None
     created = None
+    info = None
 
     # Constructor
     # @param integer route_work_id (Optional) Route work id
@@ -38,6 +39,7 @@ class RouteWork(object):
         self.anchor_replaced = db_route_work.anchor_replaced
         self.new_anchor = db_route_work.new_anchor
         self.created = db_route_work.created
+        self.info = db_route_work.info
 
     def save(self):
 
@@ -55,12 +57,14 @@ class RouteWork(object):
         db_route_work.anchor_replaced = self.anchor_replaced
         db_route_work.new_anchor = self.new_anchor
         db_route_work.created = self.created
+        db_route_work.info = self.info
 
         # Add if it does not exist already in db
         if not self.route_work_id:
             session.add(db_route_work)
 
         session.commit()
+        self.route_work_id = db_route_work.route_work_id
 
     def get_route_name(self):
    
@@ -76,6 +80,42 @@ class RouteWork(object):
 
         rw = self.__db_route_work()
         return rw.route.area.area_id
+
+    def get_note_data(self):
+
+        data = []
+        d = self.__db_route_work()
+        for note in d.notes:
+
+            data.append(
+                {'route_work_note_id':  note.route_work_note_id, 'note': note.note,
+                    'user': note.user.display_name, 'created': note.created}
+            )
+
+        return data
+
+    # Add note to route work
+    def add_note(self, note, user_id):
+
+        import db
+        from dbModel import DbRouteWorkNote
+        from sqlalchemy import func
+        session = db.session()
+        db_note = DbRouteWorkNote()
+        db_note.created = func.now()
+        db_note.user_id = user_id
+        db_note.route_work_id = self.route_work_id
+        db_note.note = note
+        session.add(db_note)
+        session.commit()
+
+    def delete(self):
+
+        import db
+        session = db.session()
+        rw = self.__db_route_work()
+        session.delete(rw)
+        session.commit()
 
     def __db_route_work(self):
 

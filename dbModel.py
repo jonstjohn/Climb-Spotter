@@ -102,9 +102,10 @@ class DbRouteWork(Base):
     anchor_replaced = Column(Integer)
     new_anchor = Column(Integer)
     created = Column(DATETIME)
+    info = Column(VARCHAR(500))
 
     route = relationship('DbRoute', uselist = False, backref = 'route_work')
-    notes = relationship('DbRouteWorkNote')
+    notes = relationship('DbRouteWorkNote', order_by = 'DbRouteWorkNote.created')
 
 class DbRouteWorkNote(Base):
 

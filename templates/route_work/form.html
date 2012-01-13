@@ -63,16 +63,16 @@
     </div>
 
     <div class="build">
-        <label for="notes">Notes</label>
+        <label for="info">Notes</label>
         <div class="widget">
-            <textarea name="notes" id="notes" rows="5" cols="50" style="width: 400px">{{ notes }}</textarea>
+            <textarea name="info" id="info" rows="5" cols="50" style="width: 400px">{{ info }}</textarea>
         </div>
     </div>
 
     <div class="build">
         <label>&nbsp;</label>
         <div class="widget">
-            <input type="submit" value="submit"/>
+            <input type="submit" value="submit"/>{% if route_work_id %} - <a href="/u/route-work/delete/{{ route_work_id }}" onclick="return confirm('Area you sure you want to delete this route work?')">Delete</a>{% endif %}
         </div>
     </div>
 
