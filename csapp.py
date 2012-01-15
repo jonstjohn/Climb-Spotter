@@ -27,6 +27,11 @@ def __form_to_sql(form):
     struct_struct = time.strptime(str(form), '%m/%d/%Y')
     return time.strftime('%Y-%m-%d 00:00:00', struct_struct)
 
+def __authenticated_user():
+
+    from model import User
+    return User.User(session['user_id'])
+
 # Check privelege, used as decorator
 def check_priv(privilege_id):
 
@@ -387,6 +392,12 @@ def route_work_form(route_work_id = None):
         from model import RouteWork
         route_work = RouteWork.RouteWork(route_work_id)
 
+        # Redirect if not admin/moderator or user that created
+        user = __authenticated_user()
+        if not user.is_administrator() and not user.is_moderator() and route_work.user_id != user.user_id:
+
+            return redirect(url_for('route_work_detail', route_work_id = route_work_id))
+
     return render_template(
         'route_work/form.html', 
         area_options = [('1', 'New River Gorge'), ('2', 'Meadow River Gorge')],
@@ -483,6 +494,29 @@ def route_work_delete(route_work_id):
     flash('Route work deleted')
 
     return redirect(url_for('route_list'))
+
+# Route form
+@app.route('/u/route-work/detail')
+@app.route('/u/route-work/detail/<route_work_id>')
+@check_priv(2)
+def route_work_detail(route_work_id):
+
+    from model import RouteWork
+    route_work = RouteWork.RouteWork(route_work_id)
+
+    return render_template(
+        'route_work/detail.html',
+        edit_priv = True if route_work.user_id == session['user_id'] else False,
+        route = route_work.get_route_name(),
+        area = route_work.get_area_name(),
+        work_date = __sql_to_form(route_work.work_date),
+        who = route_work.who,
+        bolts_placed = route_work.bolts_placed,
+        anchor_replaced = route_work.anchor_replaced,
+        new_anchor = route_work.new_anchor,
+        route_work_id = route_work_id,
+        info = route_work.info
+    )
 
 # Suggest area
 @app.route('/u/area/suggest')

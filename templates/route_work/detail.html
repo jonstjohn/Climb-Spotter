@@ -1,0 +1,62 @@
+{% extends 'auth_base.html' %}
+
+{% block cssExtra %}
+    input.ui-autocomplete-loading { background: white url('/static/css/images/ui-anim_basic_16x16.gif') right center no-repeat; }
+{% endblock %}
+
+{% block contentRight %}
+
+    <h2>Route Work Detail</h2>
+
+    <div class="contentRightBlock">
+        <div class="build">
+            <label for="area">Area</label>
+            <div class="widget" style="padding-top: 7px">{{ area }}</div>
+        </div>
+
+        <div class="build">
+            <label for="route">Route</label>
+            <div class="widget" style="padding-top: 7px">{{ route }}</div>
+        </div>
+
+        <div class="build">
+            <label for="work_date">Completed On</label>
+            <div class="widget" style="padding-top: 7px">{{ work_date }}</div>
+        </div>
+
+        <div class="build">
+            <label for="who">Who</label>
+            <div class="widget" style="padding-top: 7px">{{ who }}</div>
+        </div>
+
+        <div class="build">
+            <label for="bolts_placed">Bolts</label>
+            <div class="widget" style="padding-top: 7px">{% if bolts_placed == 0 %}No{% else %}{{ bolts_placed }}{% endif %} bolts were replaced</div>
+        </div>
+
+        <div class="build">
+            <label for="anchor">Anchor</label>
+            <div class="widget" style="padding-top: 7px">{% if not anchor_replaced and not new_anchor %}No change{% elif anchor_replaced %}Existing anchor replaced{% else %}New Anchor{% endif %}</div>
+        </div>
+
+        <div class="build">
+            <label for="info">Notes</label>
+            <div class="widget" style="padding-top: 7px">{{ info }}</div>
+        </div>
+
+        <div class="build">
+            <label>&nbsp;</label>
+            <div class="widget">
+                {% if edit_priv %}<buttton id="edit_button" type="button" onclick="window.location.href='/u/route-work/form/{{ route_work_id }}'">Edit Route Work</button>{% endif %}
+            </div>
+        </div>
+
+
+    </div>
+
+<script type="text/javascript">
+$(function() {
+    $("#edit_button").button();
+});
+</script>
+{% endblock %}

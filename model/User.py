@@ -130,6 +130,10 @@ class User(object):
 
         return 1 in self.role_ids()
 
+    def is_moderator(self):
+
+        return 2 in self.role_ids()
+
     def __db_user(self):
 
         import db
