@@ -124,6 +124,21 @@ class DbDeployScript(Base):
     start = Column(DATETIME)
     end = Column(DATETIME)
 
+class DbInvite(Base):
+
+    __tablename__ = 'invite'
+    id = Column(CHAR(32), primary_key = True)
+    email = Column(VARCHAR(100))
+    created = Column(DATETIME)
+
+class DbInviteRole(Base):
+
+    __tablename__ = 'invite_role'
+    id = Column(CHAR(32), ForeignKey('invite.id'), primary_key = True)
+    role_id = Column(Integer, ForeignKey('role.role_id'), primary_key = True)
+    invite = relationship('DbInvite', backref = 'roles')
+    role = relationship('DbRole', backref = 'invites')
+
 
 #class DbUserRole(Base):
 

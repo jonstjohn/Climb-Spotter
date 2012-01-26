@@ -105,6 +105,11 @@ def inject_menu():
             if request.path.find('/u/route-work/form') == 0:
                 item['active'] = True
             menu_items.append(item)
+        if 1 in privilege_ids:
+            item = {'label': 'Invite Users', 'url': url_for('invite_form'), 'active': False}
+            if request.path.find('/u/invite') == 0:
+                item['active'] = True
+            menu_items.append(item) 
     return dict(menu_items = menu_items)
 
 @app.route('/')
@@ -285,7 +290,50 @@ def user():
 def user_manage():
 
     from model import User
-    return render_template('user/index.html', users = User.get_data())
+
+    import db
+    from dbModel import DbInvite
+    session = db.session()
+    return render_template('user/index.html', users = User.get_data(), invites = session.query(DbInvite).order_by(DbInvite.email))
+
+@app.route('/u/invite/form')
+@login_required
+@check_priv(1)
+def invite_form():
+
+    return render_template('invite/form.html')
+
+@app.route('/u/invite/submit', methods = ['POST'])
+@login_required
+@check_priv(1)
+def invite_submit():
+
+    import smtplib
+    import string
+
+    subject = "ClimbSpotter.com Invite"
+    to = request.form['email']
+    text = "You have been invited to ClimbSpotter.com, an anchor replacement and bolt tracking system for the climbing community.\n\n"
+    text += "You are receiving this email because a moderator has identified you as an important participant in this system.\n\n"
+    text += "To accept this invitation, simply click the following link and follow the instructions:\n\n{0}\n\n".format('the link')
+    if len(request.form['message']) > 0:
+        text += "The following message was included:\n\n{0}\n\n".format(request.form['message'])
+    text += "Sincerely,\nThe ClimbSpotter.com Team"
+    body = string.join((
+        "From: invite@climbspotter.com",
+        "To: %s" % to,
+        "Subject: %s" % subject ,
+        "",
+        text
+    ), "\r\n")
+    server = smtplib.SMTP('localhost')
+    server.sendmail('invite@climbspotter.com', [to], body)
+    server.quit()
+
+    flash('Invite sent')
+
+    return redirect(url_for('invite_form'))
+    
 
 @app.route('/except')
 def exc():

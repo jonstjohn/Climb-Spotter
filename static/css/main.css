@@ -26,7 +26,7 @@ h2 {
     background: -moz-linear-gradient(#2f4d63, #16252f);
     color: #ffffff;
 }
-h3 { font-weight: normal; font-size: 16px; color: #333; margin: 10px 0 }
+h3 { font-weight: normal; font-size: 16px; color: #333; margin: 10px 5px }
 
 a {
   outline: none;
@@ -96,7 +96,7 @@ div#contentLeft { width: 190px; float: left }
 div#contentLeftInner {  }
 div.leftBlock { margin-bottom: 10px }
 div.leftBlockInner { padding: 5px;  border-right: 1px solid #d8d8d8; border-left: 1px solid #d8d8d8; border-bottom: 1px solid #d8d8d8 }
-div#contentRight { width: 730px; float: left; margin-left: 20px }
+div#contentRight { width: 730px; float: left; margin-left: 20px; background: #fff }
 div#contentRightInner { }
 .contentRightBlock { padding: 10px; background: #fff; border-right: 1px solid #d8d8d8; border-left: 1px solid #d8d8d8; border-bottom: 1px solid #d8d8d8 }
 

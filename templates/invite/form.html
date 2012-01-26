@@ -1,0 +1,52 @@
+{% extends 'auth_base.html' %}
+
+{% block contentRight %}
+
+    <h2>Send Invite</h2>
+
+    <div class="contentRightBlock">
+    {% if error %}
+        <div class="error">Please fix the following errors<br/>{{ error|safe }}</div>
+    {% endif %}
+
+    <form action="/u/invite/submit" method="post">
+    <div class="build">
+        <label for="email">Email</label>
+        <div class="widget">
+            <input type="text" name="email" id="email" size="30" maxlength="60" value="{{ email }}"/>
+        </div>
+    </div>
+    <div class="build">
+        <label for="role">Role</label>
+        <div class="widget">
+            <ul>
+                <li><label><input type="radio" name="role_id" id="role_id_3" value="3"{% if 3 in role_ids %} checked{% endif %}/> <span for="role_id_3">Bolter</span></label></li>
+                <li><label><input type="radio" name="role_id" id="role_id_4" value="4"{% if 4 in role_ids %} checked{% endif %}/> <span for="role_id_4">Viewer</span></label></li>
+            </ul>
+            <p class="help_text">Moderators manage areas and users.<br/>Bolters submit routes.<br/>Viewers view route data.</p>
+        </div>
+    </div>
+
+    <div class="build">
+        <label for="info">Message</label>
+        <div class="widget">
+            <textarea name="message" id="message" rows="5" cols="50" style="width: 400px">{{ message }}</textarea>
+        </div>
+    </div>
+
+    <div class="build">
+        <label>&nbsp;</label>
+        <div class="widget">
+            <input type="submit" value="submit"/>
+        </div>
+    </div>
+    </form>
+
+    </div>
+{% endblock %}
+
+<script type="text/javascript">
+$(function() {
+    $("input:submit").button();
+});
+</script>
