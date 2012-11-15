@@ -125,8 +125,9 @@ def access_denied():
 
 @app.route('/register')
 def register():
-
-    return render_template('register.html')
+    from recaptcha.client import captcha
+    captcha_js = captcha.displayhtml('6Ldyx9cSAAAAABAAXEIXwgBeLriZG29rEPFjzfD3')
+    return render_template('register.html', captcha_js = captcha_js)
 
 @app.route('/contact')
 def contact():
@@ -169,6 +170,18 @@ def register_submit():
 
     errors = []
     # Validate data
+
+    # Check captcha
+    from recaptcha.client import captcha
+    captcha_response = captcha.submit(
+        request.form['recaptcha_challenge_field'],
+        request.form['recaptcha_response_field'],
+        '6Ldyx9cSAAAAAOKLEN0G2dGGSFH1t0_ueKkoymY0',
+        request.remote_addr,
+    )
+    if not captcha_response.is_valid:
+        errors.append('The words you typed in the captcha were not correct.')
+
     # Check for required fields
     labels = {'username': 'Username', 'password': 'Password',
         'password2': 'Re-type Password', 'email': 'E-mail',
@@ -198,6 +211,7 @@ def register_submit():
     # If errors, display form again
     if len(errors) != 0:
 
+        captcha_js = captcha.displayhtml('6Ldyx9cSAAAAABAAXEIXwgBeLriZG29rEPFjzfD3')
         return render_template(
             'register.html', error = "<br/>\n".join(errors),
             username = request.form['username'],
@@ -205,7 +219,8 @@ def register_submit():
             password2 = request.form['password2'],
             email = request.form['email'],
             email2 = request.form['email2'],
-            display_name = request.form['display_name']
+            display_name = request.form['display_name'],
+            captcha_js = captcha_js
         )
 
     # If no errors, save user as not active and redirect to awaiting approval page

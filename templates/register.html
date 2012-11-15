@@ -1,5 +1,13 @@
 {% extends 'base.html' %}
 
+{% block cssExtra %}
+    <style>
+        .captcha label { line-height: 1; float: none }
+        .recaptcha_input_area_text { line-height: 1 }
+        .captcha input { line-height: 1; float: none }
+    </style>
+{% endblock %}
+
 {% block contentRight %}
 
     <h2>Register</h2>
@@ -50,6 +58,10 @@
             <input type="text" name="display_name" id="display_name" size="30" maxlength="30" value="{{ display_name }}"/>
             <p class="help_text">Use of real name encouraged.</p>
         </div>
+    </div>
+    <div class="build">
+        <label for="captcha">&nbsp;</label>
+        <div class="widget captcha">{{ captcha_js|safe }}</div>
     </div>
     <div class="build">
         <label>&nbsp;</label>
