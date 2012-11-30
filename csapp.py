@@ -566,10 +566,10 @@ def route_work_detail(route_work_id):
 
     from model import RouteWork
     route_work = RouteWork.RouteWork(route_work_id)
-
+    user = user = __authenticated_user()
     return render_template(
         'route_work/detail.html',
-        edit_priv = True if route_work.user_id == session['user_id'] else False,
+        edit_priv = True if route_work.user_id == session['user_id'] or user.is_administrator() or user.is_moderator() else False,
         route = route_work.get_route_name(),
         area = route_work.get_area_name(),
         work_date = __sql_to_form(route_work.work_date),
