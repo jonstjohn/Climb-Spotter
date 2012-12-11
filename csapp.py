@@ -494,10 +494,27 @@ def route_work_save():
 
     # Make sure route id matches route name
     if len(request.form['route_id']):
-        from model import Route
-        route = Route.Route(request.form['route_id'])
-        if route.name != request.form['route']:
+        if request.form['route_id'] == '0':
             errors.append("There was a problem finding the route that you entered, please try again.")
+        else:
+            from model import Route
+            route = Route.Route(request.form['route_id'])
+            if route.name != request.form['route']:
+                errors.append("There was a problem finding the route that you entered, please try again.")
+    else:
+        # Try to find route based on area name and route name
+        from model import Route
+        if len(request.form['area_id']):
+            routes = Route.search(request.form['route'], request.form['area_id'])
+        else:
+            routes = Route.search(request.form['route'])
+        
+        # If a single route was found, use that
+        if len(routes) == 1:
+            route = Route.Route(routes[0]['route_id'])
+        # Otherewise, error
+        else:
+            errors.append("There was a problem finding the route that you entered, please try typing part of the route name and then selecting from suggested routes.")
 
     # Make sure area id matches area name
     if len(request.form['area_id']):
@@ -526,7 +543,7 @@ def route_work_save():
 
     # If no errors, save route work
     work = RouteWork.RouteWork(request.form['route_work_id'])
-    work.route_id = request.form['route_id']
+    work.route_id = route.route_id
     work.work_date = __form_to_sql(request.form['work_date'])
     work.who = request.form['who']
     work.bolts_placed = request.form['bolts_placed'] if len(request.form['bolts_placed']) > 0 else '0'
