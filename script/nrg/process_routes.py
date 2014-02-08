@@ -14,7 +14,7 @@ area_lookup = {}
 route_pages = {}
 max_page = 1
 
-session = db.session()
+session = db.csdb.session
 
 # Parse file
 p = re.compile('(.*)\.\.+([0-9]*)')

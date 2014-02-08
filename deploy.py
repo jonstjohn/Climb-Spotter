@@ -40,7 +40,7 @@ for root, subfolder, files in os.walk(deploy_script_dir):
     mysql_root_password = c_live.settings['database']['root_password']
     database = c_live.settings['database']['database']
 
-    session = db.session()
+    session = db.csdb.session
 
     for file in files:
         if file[-4:] == '.sql':

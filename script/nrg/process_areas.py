@@ -12,7 +12,7 @@ book = ''
 region = ''
 wall = ''
 
-session = db.session()
+session = db.csdb.session
 
 with open(path, 'rb') as f:
     reader = csv.reader(f)
