@@ -46,7 +46,7 @@ class RouteWork(object):
         from dbModel import DbRouteWork
         from sqlalchemy import func
         import db
-        session = db.session()
+        session = db.csdb.session
 
         db_route_work = self.__db_route_work()
         db_route_work.route_id = self.route_id
@@ -100,7 +100,7 @@ class RouteWork(object):
         import db
         from dbModel import DbRouteWorkNote
         from sqlalchemy import func
-        session = db.session()
+        session = db.csdb.session
         db_note = DbRouteWorkNote()
         db_note.created = func.now()
         db_note.user_id = user_id
@@ -112,7 +112,7 @@ class RouteWork(object):
     def delete(self):
 
         import db
-        session = db.session()
+        session = db.csdb.session
         rw = self.__db_route_work()
         session.delete(rw)
         session.commit()
@@ -122,7 +122,7 @@ class RouteWork(object):
         import db
         from sqlalchemy import func
         from dbModel import DbRouteWork
-        session = db.session()
+        session = db.csdb.session
         if self.route_work_id:
             db_route_work = session.query(DbRouteWork).filter(DbRouteWork.route_work_id == self.route_work_id).one()
         else:
@@ -136,7 +136,7 @@ def get_data(exclude_administrators = True):
 
     from dbModel import DbRouteWork
     import db, time
-    session = db.session()
+    session = db.csdb.session
     route_works = []
     for route_work in session.query(DbRouteWork).order_by(DbRouteWork.work_date.desc()):
         work_date = None

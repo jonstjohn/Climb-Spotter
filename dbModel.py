@@ -3,18 +3,19 @@ Base = declarative_base();
 from sqlalchemy import Column, Integer, String, VARCHAR, Text, Date, DATETIME, DECIMAL, CHAR, INTEGER, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import Table
+from db import csdb
 
-user_role_table = Table('user_role', Base.metadata,
+user_role_table = Table('user_role', csdb.Model.metadata,
     Column('user_id', Integer, ForeignKey('user.user_id')),
     Column('role_id', Integer, ForeignKey('role.role_id'))
 )
 
-area_relationship_table = Table('area_relationship', Base.metadata,
+area_relationship_table = Table('area_relationship', csdb.Model.metadata,
     Column('ancestor', Integer, ForeignKey('area.area_id')),
     Column('descendent', Integer, ForeignKey('area.area_id'))
 )
 
-class DbUser(Base):
+class DbUser(csdb.Model):
 
     __tablename__ = 'user'
 
@@ -29,26 +30,26 @@ class DbUser(Base):
 
     roles = relationship("DbRole", secondary = user_role_table, backref="users")
 
-class DbRole(Base):
+class DbRole(csdb.Model):
 
     __tablename__ = 'role'
     role_id = Column(INTEGER, primary_key = True)
     name = Column(VARCHAR(25))
     privileges = relationship('DbRolePrivilege')
 
-class DbPrivilege(Base):
+class DbPrivilege(csdb.Model):
 
     __tablename__ = 'privilege'
     privilege_id = Column(INTEGER, primary_key = True)
     name = Column(VARCHAR(25))
 
-class DbRolePrivilege(Base):
+class DbRolePrivilege(csdb.Model):
 
     __tablename__ = 'role_privilege'
     role_id = Column(INTEGER, ForeignKey('role.role_id'), primary_key = True)
     privilege_id = Column(INTEGER, ForeignKey('privilege.privilege_id'), primary_key = True)
 
-class DbArea(Base):
+class DbArea(csdb.Model):
 
     __tablename__ = 'area'
 
@@ -71,7 +72,7 @@ class DbArea(Base):
         primaryjoin = area_id == area_relationship_table.c.ancestor,
         secondaryjoin = area_id == area_relationship_table.c.descendent)
 
-class DbRoute(Base):
+class DbRoute(csdb.Model):
 
     __tablename__ = 'route'
 
@@ -89,7 +90,7 @@ class DbRoute(Base):
         innerjoin = True, order_by = DbArea.name,
         foreign_keys=[area_relationship_table.c.ancestor, area_relationship_table.c.descendent])
 
-class DbRouteWork(Base):
+class DbRouteWork(csdb.Model):
 
     __tablename__ = 'route_work'
 
@@ -107,7 +108,7 @@ class DbRouteWork(Base):
     route = relationship('DbRoute', uselist = False, backref = 'route_work')
     notes = relationship('DbRouteWorkNote', order_by = 'DbRouteWorkNote.created')
 
-class DbRouteWorkNote(Base):
+class DbRouteWorkNote(csdb.Model):
 
     __tablename__ = 'route_work_note'
 
@@ -117,21 +118,21 @@ class DbRouteWorkNote(Base):
     note = Column(Text)
     created = Column(DATETIME)
 
-class DbDeployScript(Base):
+class DbDeployScript(csdb.Model):
 
     __tablename__ = 'deploy_script'
     path = Column(VARCHAR(150), primary_key = True)
     start = Column(DATETIME)
     end = Column(DATETIME)
 
-class DbInvite(Base):
+class DbInvite(csdb.Model):
 
     __tablename__ = 'invite'
     id = Column(CHAR(32), primary_key = True)
     email = Column(VARCHAR(100))
     created = Column(DATETIME)
 
-class DbInviteRole(Base):
+class DbInviteRole(csdb.Model):
 
     __tablename__ = 'invite_role'
     id = Column(CHAR(32), ForeignKey('invite.id'), primary_key = True)
@@ -140,7 +141,7 @@ class DbInviteRole(Base):
     role = relationship('DbRole', backref = 'invites')
 
 
-#class DbUserRole(Base):
+#class DbUserRole(csdb.Model):
 
 #    __tablename__ = 'user_role'
 #    user_id = Column(INTEGER, primary_key = True)
@@ -150,7 +151,7 @@ class DbInviteRole(Base):
 #    role = relationship('DbRole', uselist = False, backref = 'role')
 
 #
-#class MpArea(Base):
+#class MpArea(csdb.Model):
 #
 #    __tablename__ = 'mp_area'
 #
@@ -169,7 +170,7 @@ class DbInviteRole(Base):
 #
 #    area = relationship('Area', uselist = False, backref = 'area')
 #
-#class State(Base):
+#class State(csdb.Model):
 #
 #    __tablename__ = 'state'
 #    state_id = Column(INTEGER, primary_key = True)     
@@ -184,7 +185,7 @@ class DbInviteRole(Base):
 #    ne_longitude = Column(DECIMAL(8,5))
 #    aspect_ratio = Column(DECIMAL(5,3))
 #
-#class Area(Base):
+#class Area(csdb.Model):
 #
 #    __tablename__ = 'area'
 #

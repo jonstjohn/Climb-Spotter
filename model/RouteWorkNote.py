@@ -35,7 +35,7 @@ class RouteWorkNote(object):
         from dbModel import DbRouteWorkNote
         from sqlalchemy import func
         import db
-        session = db.session()
+        session = db.csdb.session
 
         db_route_work_note = self.__db_route_work_note()
         db_route_work_note.route_work_id = self.route_work_id
@@ -54,7 +54,7 @@ class RouteWorkNote(object):
         import db
         from sqlalchemy import func
         from dbModel import DbRouteWorkNote
-        session = db.session()
+        session = db.csdb.session
         if self.route_work_note_id:
             db_route_work_note = session.query(DbRouteWorkNote).filter(DbRouteWorkNote.route_work_note_id == self.route_work_note_id).one()
         else:

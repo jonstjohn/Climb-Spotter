@@ -31,7 +31,7 @@ class Route(object):
         from dbModel import DbRoute
         from sqlalchemy import func
         import db
-        session = db.session()
+        session = db.csdb.session
 
         db_route = self.__db_route()
         db_route.name = self.name
@@ -48,7 +48,7 @@ class Route(object):
         import db
         from sqlalchemy import func
         from dbModel import DbRoute
-        session = db.session()
+        session = db.csdb.session
         if self.route_id:
             db_route = session.query(DbRoute).filter(DbRoute.route_id == self.route_id).one()
         else:
@@ -61,7 +61,7 @@ def search(str, area_id = None):
     from dbModel import DbRoute
 
     import db
-    session = db.session()
+    session = db.csdb.session
     routes = []
 
     #SELECT route.route_id, route.name

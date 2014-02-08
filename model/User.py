@@ -39,8 +39,8 @@ class User(object):
 
         from dbModel import DbUser
         from sqlalchemy import func
-        import db
-        session = db.session()
+        from db import csdb
+        session = csdb.session
 
         db_user = self.__db_user()
         db_user.username = self.username
@@ -58,13 +58,13 @@ class User(object):
     def set_encrypted_password(self, password):
 
         import db
-        session = db.session()
+        session = db.csdb.session
         self.password = session.query('encrypted_password').from_statement("SELECT SHA1(:password) AS encrypted_password").params(password = password).one()[0]
 
     def activate(self):
 
         import db
-        session = db.session()
+        session = db.csdb.session
         db_user = self.__db_user()
         db_user.active = 1
         self.active = 1
@@ -74,7 +74,7 @@ class User(object):
 
         import db
         from dbModel import DbRole
-        session = db.session()
+        session = db.csdb.session
         db_user = self.__db_user()
 
         db_user.roles = []
@@ -113,7 +113,7 @@ class User(object):
 
                 import db
                 from dbModel import DbPrivilege
-                session = db.session()
+                session = db.csdb.session
                 for privilege in session.query(DbPrivilege):
 
                     privilege_ids.append(privilege.privilege_id)
@@ -139,7 +139,7 @@ class User(object):
         import db
         from dbModel import DbUser
         from sqlalchemy import func
-        session = db.session()
+        session = db.csdb.session
         if self.user_id:
             db_user = session.query(DbUser).filter(DbUser.user_id == self.user_id).one()
         else:
@@ -156,7 +156,7 @@ def getInstanceFromUsernamePassword(username, password):
     from dbModel import DbUser
     from sqlalchemy import func
     import db
-    session = db.session()
+    session = db.csdb.session
     db_user = session.query(DbUser).filter(DbUser.username == username).filter(DbUser.password == func.sha1(password)).filter(DbUser.active == 1).one()
     return User(db_user.user_id)
 
@@ -167,7 +167,7 @@ def getInstanceFromUsername(username):
 
     from dbModel import DbUser
     import db
-    session = db.session()
+    session = db.csdb.session
     db_user = session.query(DbUser).filter(DbUser.username == username).one()
     return User(db_user.user_id)
 
@@ -179,7 +179,7 @@ def usernameExists(username, exclude_user_id = None):
     from dbModel import DbUser
     from sqlalchemy import func
     import db
-    session = db.session()
+    session = db.csdb.session
     query = session.query(DbUser).filter(DbUser.username == username)
     if exclude_user_id:
         query.filter(DbUser.user_id != exclude_user_id)
@@ -191,7 +191,7 @@ def get_data(exclude_administrators = True):
 
     from dbModel import DbUser
     import db
-    session = db.session()
+    session = db.csdb.session
     users = []
     for user in session.query(DbUser).order_by(DbUser.active.desc()).order_by(DbUser.display_name):
         is_administrator = False

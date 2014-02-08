@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import request, session
 from flask import abort, redirect, url_for, flash
+from flask import g
 
 from functools import wraps
 
@@ -9,10 +10,15 @@ import sqlalchemy
 import json
 import db
 
+import CsConfiguration
+
+config = CsConfiguration.CsConfiguration()
+
 app = Flask(__name__)
+csdb = db.init(app)
 
 # set the secret key.  keep this really secret:
-app.secret_key = 'ADDefA221 -9981 Bdd%kkkll'
+app.secret_key = config.settings['flask']['secret_key']
 
 # Convert sql date to form date
 def __sql_to_form(sql):
@@ -308,8 +314,7 @@ def user_manage():
 
     import db
     from dbModel import DbInvite
-    session = db.session()
-    return render_template('user/index.html', users = User.get_data(), invites = session.query(DbInvite).order_by(DbInvite.email))
+    return render_template('user/index.html', users = User.get_data(), invites = db.csdb.session.query(DbInvite).order_by(DbInvite.email))
 
 @app.route('/u/invite/form')
 @login_required
@@ -639,6 +644,18 @@ def logout():
     session.pop('username', None)
     session.pop('user_id', None)
     return redirect(url_for('index'))
+
+def after_this_request(f):
+    if not hasattr(g, 'after_request_callbacks'):
+        g.after_request_callbacks = []
+    g.after_request_callbacks.append(f)
+    return f
+
+@app.after_request
+def call_after_request_callbacks(response):
+    for callback in getattr(g, 'after_request_callbacks', ()):
+        callback(response)
+    return response
 
 if __name__ == '__main__':
     app.debug = True

@@ -35,7 +35,7 @@ class Area(object):
         from dbModel import DbArea
         from sqlalchemy import func
         import db
-        session = db.session()
+        session = db.csdb.session
 
         db_area = self.__db_area()
         db_area.name = self.name
@@ -66,7 +66,7 @@ class Area(object):
         import db
         from sqlalchemy import func
         from dbModel import DbArea
-        session = db.session()
+        session = db.csdb.session
         if self.area_id:
             db_area = session.query(DbArea).filter(DbArea.area_id == self.area_id).one()
         else:
@@ -80,7 +80,7 @@ def search(str, exact = False, parent_id = None):
     from dbModel import DbArea
 
     import db
-    session = db.session()
+    session = db.csdb.session
     areas = []
 
     srch = str
